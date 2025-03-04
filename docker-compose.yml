@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: acadalyze-php-backend:latest
+    container_name: acadalyze-php-backend
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./backend:/var/www/html
+    environment:
+      MYSQL_HOST: acadalyze-mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: acadalyze
+
+  acadalyze-mysql:
+    image: mysql:8.0
+    container_name: acadalyze-mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: acadalyze
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  acadalyze-phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: acadalyze-phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: acadalyze-mysql
+      MYSQL_ROOT_PASSWORD: root
+    depends_on:
+      - acadalyze-mysql
+
+volumes:
+  mysql-data:
