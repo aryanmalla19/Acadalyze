@@ -31,6 +31,7 @@ services:
       MYSQL_PASSWORD: password
     volumes:
       - mysql-data:/var/lib/mysql
+      - ./backend/docker/mysql-init:/docker-entrypoint-initdb.d  # Auto-runs SQL files
 
   acadalyze-phpmyadmin:
     image: phpmyadmin/phpmyadmin
