@@ -7,14 +7,9 @@ use App\Core\Controller;
 use Exception;
 
 class AuthController extends Controller
-{public function login()
+{
+    public function login($data)
     {
-        // Get login data from a single identifier field
-        $data = [
-            'identifier' => $_POST['identifier'] ?? '', // Single field for email or username
-            'password' => $_POST['password'] ?? ''
-        ];
-    
         // Validate input
         if (empty($data['identifier'])) {
             http_response_code(400);
@@ -34,7 +29,7 @@ class AuthController extends Controller
     
         if (!$userData || !password_verify($data['password'], $userData['password'])) {
             http_response_code(401);
-            echo json_encode(["error" => "Invalid credentials"]);
+            echo json_encode(["status"=> "error", "error" => "Invalid credentials"]);
             return;
         }
     
@@ -42,28 +37,29 @@ class AuthController extends Controller
         try {
             $token = Auth::generateToken($userData['user_id'], $data['identifier']); // This will create the JWT token
             echo json_encode([
+                "status"=> "success", 
                 "message" => "Login successful",
                 "token" => $token
             ]);
         } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(["error" => "Internal Server Error", "message" => $e->getMessage()]);
+            echo json_encode(["status"=> "error", "error" => "Internal Server Error", "message" => $e->getMessage()]);
         }
     }
 
-    public function register()
+    public function register($data)
     {
         // Get registration data
         $data = [
-            'email' => $_POST['email'] ?? '',
-            'password' => $_POST['password'] ?? '',
-            'username' => $_POST['username'] ?? '',
-            'first_name' => $_POST['first_name'] ?? '',
-            'last_name' => $_POST['last_name'] ?? '',
-            'address' => $_POST['address'] ?? '',
-            'phone_number' => $_POST['phone_number'] ?? '',
-            'parent_phone_number' => $_POST['parent_phone_number'] ?? '',
-            'date_of_birth' => $_POST['date_of_birth'] ?? '',
+            'email' => $data['email'] ?? '',
+            'password' => $data['password'] ?? '',
+            'username' => $data['username'] ?? '',
+            'first_name' => $data['first_name'] ?? '',
+            'last_name' => $data['last_name'] ?? '',
+            'address' => $data['address'] ?? '',
+            'phone_number' => $data['phone_number'] ?? '',
+            'parent_phone_number' => $data['parent_phone_number'] ?? '',
+            'date_of_birth' => $data['date_of_birth'] ?? '',
         ];
 
         // Define validation rules
@@ -124,7 +120,7 @@ class AuthController extends Controller
             ]);
         } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(["error" => "Internal Server Error", "message" => $e->getMessage()]);
+            echo json_encode(["status"=> "error", "error" => "Internal Server Error", "message" => $e->getMessage()]);
         }
     }
 
