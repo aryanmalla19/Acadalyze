@@ -26,7 +26,7 @@ class AuthController extends Controller
     
         // Check credentials using the identifier (email or username)
         $userData = $user->getUserByIdentifier($data['identifier']);
-    
+        
         if (!$userData || !password_verify($data['password'], $userData['password'])) {
             http_response_code(401);
             echo json_encode(["status"=> "error", "error" => "Invalid credentials"]);
@@ -35,7 +35,7 @@ class AuthController extends Controller
     
         // Generate JWT token
         try {
-            $token = Auth::generateToken($userData['user_id'], $data['identifier']); // This will create the JWT token
+            $token = Auth::generateToken($userData['role_name'], $userData['user_id'], $data['identifier']); // This will create the JWT token
             echo json_encode([
                 "status"=> "success", 
                 "message" => "Login successful",
@@ -124,15 +124,4 @@ class AuthController extends Controller
         }
     }
 
-    /**
-     * User logout (invalidate token)
-     */
-    public function logout()
-    {
-        // Invalidate token (optional, based on your JWT setup)
-        // JWT typically doesn't require a logout endpoint since it's stateless
-        // So we could just delete the token from client-side storage
-
-        echo json_encode(["message" => "Logout successful"]);
-    }
 }

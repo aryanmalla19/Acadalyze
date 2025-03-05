@@ -30,12 +30,12 @@ $router->addRoute("POST", "/api/register", [$authController, "register"]);
 
 // Admin-Only Routes
 $router->addRoute("GET", "/api/users", [$userController, "getAllUsers"], [
-    ["App\Middleware\RoleMiddleware", ["admin"]] // Only 'admin' can access
+    ["App\Middleware\RoleMiddleware", ["Admin"]] // Only 'admin' can access
 ]);
 
 // User & Admin Access (Only registered users)
 $router->addRoute("GET", "/api/users/{id}", [$userController, "getUserById"], [
-    ["App\Middleware\RoleMiddleware", ["user", "admin"]] // Both user & admin can access
+    ["App\Middleware\RoleMiddleware", ["user", "Admin"]] // Both user & admin can access
 ]);
 
 $router->route();

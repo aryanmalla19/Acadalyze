@@ -16,14 +16,22 @@ class UserController extends Controller
         ]);
     }
 
-    public function getUserById($id)
+    public function getUserById($data)
     {
+        $id = $data['id'];
         $userModel = $this->model('User');
         $user = $userModel->getUserById($id);
+        if($user){
+            echo json_encode([
+                "status" => "success",
+                "message" => "User data fetched sucessfully",
+                "data" => $user,
+            ]);
+            return;
+        }
         echo json_encode([
-            "status" => "success",
-            "message" => "User data fetched sucessfully",
-            "data" => $user,
+            "status" => "error",
+            "message" => "Could not find User with  ID"
         ]);
     }
 

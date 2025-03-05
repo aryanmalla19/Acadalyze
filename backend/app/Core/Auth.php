@@ -6,11 +6,12 @@ use Firebase\JWT\Key;
 use Exception;
 
 class Auth {
-    public static function generateToken($userId, $identifier) {
+    public static function generateToken($role, $userId, $identifier) {
         $payload = [
             "iat" => time(), // Issued at
             "exp" => time() + JWT_EXPIRATION, // Expiry time
-            "sub" => $userId, // User ID
+            "user_id" => $userId, // User ID
+            "role" => $role, // Role ID
             "identifier" => $identifier // User Email
         ];
 

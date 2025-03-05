@@ -13,7 +13,6 @@ class RoleMiddleware {
         }
 
         $userData = Auth::validateToken(str_replace('Bearer ', '', $token));
-
         if (!$userData) {
             throw new \Exception("Forbidden: Invalid or expired token");
         }

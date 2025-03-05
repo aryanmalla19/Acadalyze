@@ -20,20 +20,19 @@ class Router
             "middlewares" => $middlewares
         ];
     }
-
     public function route()
     {
         $requestMethod = $_SERVER["REQUEST_METHOD"];
         $requestUri = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
-
+    
         header("Content-Type: application/json");
-
+    
         $requestData = $this->getRequestData();
-
+    
         foreach ($this->routes as $route) {
             if ($route["method"] === $requestMethod && preg_match($route["path"], $requestUri, $matches)) {
                 $params = array_filter($matches, "is_string", ARRAY_FILTER_USE_KEY);
-
+    
                 foreach ($route["middlewares"] as $middleware) {
                     if (is_array($middleware)) {
                         [$middlewareClass, $middlewareArgs] = array_pad((array)$middleware, 2, null);
@@ -60,9 +59,14 @@ class Router
                         }
                     }
                 }
-
+    
                 try {
-                    call_user_func_array($route["handler"], [$requestData, ...array_values($params)]);
+                    $args = [$requestData, ...array_values($params)];
+                    if(empty($args[0])){
+                        call_user_func_array($route["handler"], [$params]);
+                    }else{
+                        call_user_func_array($route["handler"], [$requestData, ...array_values($params)]);
+                    }
                 } catch (\Throwable $e) {
                     http_response_code(500);
                     echo json_encode(["error" => "Internal Server Error", "message" => $e->getMessage()]);
@@ -70,11 +74,12 @@ class Router
                 return;
             }
         }
-
+    
         http_response_code(404);
         echo json_encode(["error" => "Not Found", "message" => "Route not found"]);
     }
 
+    
     private function getRequestData(): array
     {
         $contentType = $_SERVER['CONTENT_TYPE'] ?? '';

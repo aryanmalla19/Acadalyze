@@ -70,7 +70,11 @@ class User extends Model {
 
     public function getUserByIdentifier(string $identifier)
     {
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE email = :identifier OR username = :identifier LIMIT 1");
+        $sql = "SELECT u.*, r.role_name 
+                FROM users u 
+                LEFT JOIN roles r ON u.role_id = r.role_id 
+                WHERE u.email = :identifier OR u.username = :identifier LIMIT 1";
+        $stmt = $this->db->prepare($sql);
         $stmt->execute(['identifier' => $identifier]);
         return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
     }
