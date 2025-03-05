@@ -1,5 +1,6 @@
 /vendor/
 /node_modules/
+/vendor/
 *.log
 .env
 mysql-data/
