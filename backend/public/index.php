@@ -1,6 +1,8 @@
 <?php
 // Load Composer autoloader
-require_once '../vendor/autoload.php';
+require_once __DIR__.'/../vendor/autoload.php';
+
+// Rest of your code goes here...
 set_exception_handler([App\Core\ErrorHandler::class, 'handleException']);
 
 header("Content-type: application/json; charset=UTF-8");
@@ -35,7 +37,8 @@ $router->addRoute("GET", "/api/users", [$userController, "getAllUsers"], [
 
 // User & Admin Access (Only registered users)
 $router->addRoute("GET", "/api/users/{id}", [$userController, "getUserById"], [
-    ["App\Middleware\RoleMiddleware", ["user", "Admin"]] // Both user & admin can access
+    ["App\Middleware\RoleMiddleware", ["Student", "Teacher", "Admin"]], // Both user & admin can access
+    ["App\Middleware\UserAccessMiddleware"]
 ]);
 
 $router->route();

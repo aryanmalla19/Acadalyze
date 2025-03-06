@@ -6,7 +6,9 @@ class User extends Model {
     // Get all users
     public function getAllUsers(): array
     {
-        $stmt = $this->db->query("SELECT * FROM users");
+        $stmt = $this->db->query("SELECT u.*, NULL as password, r.role_name 
+            FROM users u 
+            LEFT JOIN roles r ON u.role_id = r.role_id");
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
