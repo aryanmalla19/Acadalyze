@@ -39,10 +39,10 @@ class Router
                         if (class_exists($middlewareClass) && method_exists($middlewareClass, "handle")) {
                             try {
                                 if ($middlewareArgs !== null) {
-                                    $middlewareClass::handle($middlewareArgs);
+                                    $middlewareClass::handle(array_merge($middlewareArgs, $params)); // Merge predefined and dynamic params
                                 } else {
-                                    $middlewareClass::handle();
-                                }
+                                    $middlewareClass::handle($params); // Pass dynamic route params
+                                }                                
                             } catch (\Throwable $e) {
                                 http_response_code(403);
                                 echo json_encode(["error" => "Forbidden", "message" => $e->getMessage()]);
