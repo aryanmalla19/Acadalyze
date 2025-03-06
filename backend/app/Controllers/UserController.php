@@ -29,9 +29,10 @@ class UserController extends Controller
             ]);
             return;
         }
+        http_response_code(404);
         echo json_encode([
             "status" => "error",
-            "message" => "Could not find User with  ID"
+            "message" => "User with ID $id does not exists"
         ]);
     }
 
