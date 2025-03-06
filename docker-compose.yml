@@ -1,20 +1,22 @@
 services:
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    image: acadalyze-php-backend:latest
-    container_name: acadalyze-php-backend
+    image: webdevops/php-nginx-dev:8.4
     restart: always
     ports:
       - "8080:80"
     volumes:
       - ./backend:/var/www/html
+    command: >-
+      sh -c "cd /var/www/html && 
+            composer install --no-interaction && 
+            php-fpm & 
+            nginx -g 'daemon off;'"
     environment:
       MYSQL_HOST: acadalyze-mysql
       MYSQL_USER: root
       MYSQL_PASSWORD: root
       MYSQL_DATABASE: acadalyze
+      WEB_DOCUMENT_ROOT: /var/www/html/public
 
   acadalyze-mysql:
     image: mysql:8.0
