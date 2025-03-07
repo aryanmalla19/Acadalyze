@@ -9,6 +9,7 @@ import Page3 from "./Pages/Page3";
 import Page4 from "./Pages/Page4";
 
 import Sidebar from "./Components/Sidebar/Sidebar";
+// import LoginSignup from "./Pages/LoginSignup";
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
       </div> */}
 
       <Sidebar />
+      {/* <LoginSignup /> */}
 
       <Routes>
         <Route path="/" element={<Home />} />
