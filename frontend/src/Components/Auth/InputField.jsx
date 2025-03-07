@@ -10,7 +10,7 @@ const InputField = ({ icon: Icon, type, placeholder }) => {
           required
           className="w-full bg-transparent focus:outline-none"
         />
-        <Icon className="text-gray-500 mr-2" />
+        {Icon && <Icon className="text-gray-500 mr-2" />}
       </div>
     </div>
   );
