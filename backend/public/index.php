@@ -20,7 +20,6 @@ $authController = new AuthController();
 
 // $router->addRoute("POST", "/api/users", [$userController, "createUser"]);
 $router->addRoute("PUT", "/api/users/{id}", [$userController, "updateUser"]);
-$router->addRoute("DELETE", "/api/users/{id}", [$userController, "deleteUser"]);
 
 // Public Routes
 $router->addRoute("POST", "/api/login", [$authController, "login"]);
@@ -37,7 +36,12 @@ $router->addRoute("GET", "/api/users", [$userController, "getAllUsers"], [
 
 // User & Admin Access (Only registered users)
 $router->addRoute("GET", "/api/users/{id}", [$userController, "getUserById"], [
-    ["App\Middleware\RoleMiddleware", ["Student", "Teacher", "Admin"]], // Both user & admin can access
+    ["App\Middleware\AuthMiddleware"],
+    ["App\Middleware\UserAccessMiddleware"]
+]);
+
+$router->addRoute('DELETE', "/api/users/{id}", [$userController, "deleteUser"], [
+    ["App\Middleware\AuthMiddleware"],
     ["App\Middleware\UserAccessMiddleware"]
 ]);
 

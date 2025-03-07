@@ -2,48 +2,47 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Models\User;
 
 class UserController extends Controller
 {
+    private $userModel;
+
+    public function __construct()
+    {
+        $this->userModel = $this->model('User');
+    }
+
     public function getAllUsers()
     {
-        $userModel   = $this->model('User');
-        $users = $userModel->getAllUsers();
-        echo json_encode([
-            "status" => "success",
-            "message" => "All Users data fetched sucessfully",
-            "data" => $users,
-        ]);
+        $users = $this->userModel->getAllUsers();
+        $this->sendResponse("success", "All Users data fetched successfully", $users);
     }
 
-    public function getUserById($data)
+    public function getUserById($requestData, $id)
     {
-        $id = $data['id'];
-        $userModel = $this->model('User');
-        $user = $userModel->getUserById($id);
-        if($user){
-            echo json_encode([
-                "status" => "success",
-                "message" => "User data fetched sucessfully",
-                "data" => $user,
-            ]);
-            return;
+        $user = $this->userModel->getUserById($id);
+
+        if ($user) {
+            $this->sendResponse("success", "User data fetched successfully", $user);
+        } else {
+            $this->sendResponse("error", "User with ID $id does not exist", [], 404);
         }
-        http_response_code(404);
-        echo json_encode([
-            "status" => "error",
-            "message" => "User with ID $id does not exists"
-        ]);
     }
 
-    public function updateUser($id)
+    public function updateUser($requestData, $id)
     {
         $data = json_decode(file_get_contents("php://input"), true);
-        echo json_encode(["message" => "User updated", "id" => $id, "data" => $data]);
+        // Update logic here (e.g., $this->userModel->updateUser($id, $data))
+        $this->sendResponse("success", "User updated successfully", ["id" => $id, "data" => $data]);
     }
 
-    public function deleteUser($id)
+    public function deleteUser($requestData, $id)
     {
-        echo json_encode(["message" => "User deleted", "id" => $id]);
+        if($this->userModel->deleteUser($id)){
+            $this->sendResponse("success", "User deleted successfully", $id);
+        }
+        $this->sendResponse("error", "Could not find User with ID $id", false);
+
     }
 }

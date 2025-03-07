@@ -15,7 +15,7 @@ class User extends Model {
     // Get a user by ID
     public function getUserById($id): bool|array
     {
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE user_id = :id");
+        $stmt = $this->db->prepare("SELECT *, NULL as password FROM users WHERE user_id = :id");
         $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
         $stmt->execute();
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -81,11 +81,12 @@ class User extends Model {
         return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
     }
 
-    // Delete user by ID
     public function deleteUser($id): bool
     {
         $stmt = $this->db->prepare("DELETE FROM users WHERE user_id = :id");
         $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
-        return $stmt->execute();
+        $result = $stmt->execute();
+
+        return $result && $stmt->rowCount() > 0;
     }
 }

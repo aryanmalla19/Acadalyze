@@ -12,13 +12,11 @@ class AuthController extends Controller
     {
         // Validate input
         if (empty($data['identifier'])) {
-            http_response_code(400);
-            echo json_encode(["status" => "error", "error" => "Email or username is required"]);
+            $this->sendResponse("error", "Email or username is required", null, 400);
             return;
         }
         if (empty($data['password'])) {
-            http_response_code(400);
-            echo json_encode(["status" => "error", "error" => "Password is required"]);
+            $this->sendResponse("error", "Password is required", null, 400);
             return;
         }
     
@@ -26,11 +24,13 @@ class AuthController extends Controller
     
         // Check credentials using the identifier (email or username)
         $userData = $user->getUserByIdentifier($data['identifier']);
+
+        if(!$userData){
+            $this->sendResponse("error", "Email or username does not exists", null, 404);
+        }
         
         if (!$userData || !password_verify($data['password'], $userData['password'])) {
-            http_response_code(401);
-            echo json_encode(["status"=> "error", "error" => "Invalid credentials"]);
-            return;
+            $this->sendResponse("error", "Invalid credentials", null, 401);
         }
     
         // Generate JWT token
@@ -77,9 +77,7 @@ class AuthController extends Controller
         // Validate the data
         $user = new User();
         if (!$user->validate($data, $rules)) {
-            // If validation fails, return errors
-            http_response_code(400);
-            echo json_encode(["errors" => $user->getErrors()]);
+            $this->sendResponse("error", $user->getErrors(), null, 400);
             return;
         }
 
@@ -89,15 +87,13 @@ class AuthController extends Controller
         try {
             // Check if email is already registered
             if ($user->getUserByEmail($data['email'])) {
-                http_response_code(409);
-                echo json_encode(["status"=> "error", "error" => "Email is already registered"]);
+                $this->sendResponse("error", "Email is already registered", null, 409);
                 return;
             }
 
             // Check if username is already registered
             if ($user->getUserByUsername($data['username'])) {
-                http_response_code(409);
-                echo json_encode(["status"=> "error", "error" => "Username is already registered"]);
+                $this->sendResponse("error", "Username is already registered", null, 409);
                 return;
             }
 

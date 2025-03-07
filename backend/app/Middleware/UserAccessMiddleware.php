@@ -9,11 +9,10 @@ class UserAccessMiddleware {
         $user = AuthMiddleware::handle(); // Authenticate the user first
         // Extract `id` from route parameters
         $requestedUserId = $params['id'] ?? $_GET['id'] ?? null;
-        
+
         if($user['role'] == 'Admin'){
             return $user; 
         }
-        
         if ($user['user_id'] != $requestedUserId) {
             http_response_code(403);
             echo json_encode(["status" => "error","message" => "Forbidden: You can only access your own data"]);
