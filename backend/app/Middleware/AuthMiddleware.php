@@ -1,27 +1,23 @@
 <?php
 namespace App\Middleware;
 
+use App\Core\Middleware;
+use App\Core\Request;
 use App\Core\Auth;
 
-class AuthMiddleware {
-    public static function handle() {
-        $headers = getallheaders();
-        $token = $headers['Authorization'] ?? '';
-
-        if (!$token) {
-            http_response_code(401);
-            echo json_encode(["status" => "error","message" => "Unauthorized: Token required"]);
-            exit;
+class AuthMiddleware extends Middleware
+{
+    public function handle(Request $request, callable $next, ...$args): array
+    {
+        $authHeader = $request->getHeader('Authorization', '');
+        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            $token = $matches[1];
+            $userData = Auth::validateToken($token);
+            if ($userData) {
+                $request->user = $userData;
+                return $this->proceed($request, $next);
+            }
         }
-
-        $decoded = Auth::validateToken(str_replace('Bearer ', '', $token));
-
-        if (!$decoded) {
-            http_response_code(403);
-            echo json_encode(["status" => "error","message" => "Forbidden: Invalid or expired token"]);
-            exit;
-        }
-
-        return $decoded;
+        $this->sendResponse("error", "Unauthorized", [], 401);
     }
 }

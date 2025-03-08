@@ -3,6 +3,7 @@ namespace App\Models;
 use App\Core\Model;
 
 class User extends Model {
+    protected static string $table = 'users';
     // Get all users
     public function getAllUsers(): array
     {
@@ -20,6 +21,30 @@ class User extends Model {
         $stmt->execute();
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
         return $user ?: false;
+    }
+
+    public static function find(string $id): ?static
+    {
+        // Ensure PDO is set
+        if (!isset(static::$pdo)) {
+            throw new \RuntimeException("Database connection not initialized");
+        }
+
+        $stmt = static::$pdo->prepare("SELECT * , NULL as password, r.role_name
+            FROM users u 
+            LEFT JOIN roles r ON u.role_id = r.role_id WHERE user_id = :user_id LIMIT 1");
+        $stmt->execute([':user_id' => (int)$id]); // Cast to int for numeric IDs
+        $data = $stmt->fetch(\PDO::FETCH_ASSOC);
+        if ($data === false) {
+            return null;
+        }
+        
+        // Create an instance and populate it
+        $instance = new static();
+        foreach ($data as $key => $value) {
+            $instance->$key = $value;
+        }
+        return $instance;
     }
 
 
@@ -40,14 +65,31 @@ class User extends Model {
     }
 
     // Update user details (no validation here, just DB logic)
-    public function updateUser($id, array $data): bool
+    public function updateUser(string $id, array $data): bool
     {
-        $stmt = $this->db->prepare("UPDATE users SET name = :name, email = :email WHERE user_id = :id");
-        return $stmt->execute([
-            ':id' => $id,
-            ':name' => $data['name'],
-            ':email' => $data['email']
-        ]);
+        if (empty($data)) {
+            return false; // Nothing to update
+        }
+
+        // Define allowed fields to prevent updating sensitive columns (e.g., role, school_id)
+        $allowedFields = ['first_name', 'last_name', 'address', 'date_of_birth', 'phone_number', 'parent_phone_number', 'email', 'username']; // Adjust based on your schema
+        $updateFields = array_intersect_key($data, array_flip($allowedFields));
+
+        if (empty($updateFields)) {
+            return false; // No valid fields to update
+        }
+
+        // Build the SET clause dynamically
+        $setClause = implode(', ', array_map(fn($key) => "$key = :$key", array_keys($updateFields)));
+        $query = "UPDATE users SET $setClause WHERE user_id = :id";
+
+        $stmt = $this->db->prepare($query);
+        $params = array_merge([':id' => $id], array_combine(
+            array_map(fn($key) => ":$key", array_keys($updateFields)),
+            array_values($updateFields)
+        ));
+
+        return $stmt->execute($params);
     }
 
     public function getUserByEmail($email)

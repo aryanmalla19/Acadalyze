@@ -3,23 +3,27 @@ namespace App\Controllers;
 
 use App\Models\User;
 use App\Core\Auth;
+use App\Core\Request;
 use App\Core\Controller;
 use Exception;
 
+
 class AuthController extends Controller
 {
-    public function login($data)
+    public function __construct()
     {
-        // Validate input
+    }
+
+    public function login(Request $request)
+    {
+        $data = $request->body;
         if (empty($data['identifier'])) {
-            $this->sendResponse("error", "Email or username is required", null, 400);
-            return;
+            $this->sendResponse("error", "Email or username is required", [], 400);
         }
         if (empty($data['password'])) {
-            $this->sendResponse("error", "Password is required", null, 400);
-            return;
+            $this->sendResponse("error", "Password is required", [], 400);
         }
-    
+
         $user = new User();
     
         // Check credentials using the identifier (email or username)
@@ -30,36 +34,29 @@ class AuthController extends Controller
         }
         
         if (!$userData || !password_verify($data['password'], $userData['password'])) {
-            $this->sendResponse("error", "Invalid credentials", null, 401);
+            $this->sendResponse("error", "Invalid credentials", [], 401);
         }
-    
-        // Generate JWT token
+
         try {
-            $token = Auth::generateToken($userData['role_name'], $userData['user_id'], $data['identifier']); // This will create the JWT token
-            echo json_encode([
-                "status"=> "success", 
-                "message" => "Login successful",
-                "token" => $token
-            ]);
+            $token = Auth::generateToken($userData['role_name'], $userData['user_id'], $data['school_id'], $data['identifier']);
+            $this->sendResponse("success", "Login successful", ["token" => $token]);
         } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode(["status"=> "error", "error" => "Internal Server Error", "message" => $e->getMessage()]);
+            $this->sendResponse("error", "Internal Server Error", [], 500);
         }
     }
 
-    public function register($data)
+    public function register(Request $request)
     {
-        // Get registration data
-        $data = [
-            'email' => $data['email'] ?? '',
-            'password' => $data['password'] ?? '',
-            'username' => $data['username'] ?? '',
-            'first_name' => $data['first_name'] ?? '',
-            'last_name' => $data['last_name'] ?? '',
-            'address' => $data['address'] ?? '',
-            'phone_number' => $data['phone_number'] ?? '',
-            'parent_phone_number' => $data['parent_phone_number'] ?? '',
-            'date_of_birth' => $data['date_of_birth'] ?? '',
+        $data = $request->body + [
+            'email' => '',
+            'password' => '',
+            'username' => '',
+            'first_name' => '',
+            'last_name' => '',
+            'address' => '',
+            'phone_number' => '',
+            'parent_phone_number' => '',
+            'date_of_birth' => '',
         ];
 
         // Define validation rules
@@ -77,8 +74,7 @@ class AuthController extends Controller
         // Validate the data
         $user = new User();
         if (!$user->validate($data, $rules)) {
-            $this->sendResponse("error", $user->getErrors(), null, 400);
-            return;
+            $this->sendResponse("error", implode(", ", $user->getErrors()), [], 400);
         }
 
         // Hash the password before passing it to the model
@@ -87,20 +83,18 @@ class AuthController extends Controller
         try {
             // Check if email is already registered
             if ($user->getUserByEmail($data['email'])) {
-                $this->sendResponse("error", "Email is already registered", null, 409);
-                return;
+                $this->sendResponse("error", "Email is already registered", [], 409);
             }
 
             // Check if username is already registered
             if ($user->getUserByUsername($data['username'])) {
-                $this->sendResponse("error", "Username is already registered", null, 409);
-                return;
+                $this->sendResponse("error", "Username is already registered", [], 409);
             }
 
             // Create the new user
             $newUser = $user->createUser([
                 'email' => $data['email'],
-                'password' => $hashedPassword, // Store the hashed password
+                'password' => $hashedPassword,
                 'username' => $data['username'],
                 'first_name' => $data['first_name'],
                 'last_name' => $data['last_name'],
@@ -110,13 +104,9 @@ class AuthController extends Controller
                 'parent_phone_number' => $data['parent_phone_number'],
             ]);
 
-            echo json_encode([
-                "message" => "Registration successful",
-                "user" => $newUser
-            ]);
+            $this->sendResponse("success", "Registration successful", $newUser);
         } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode(["status"=> "error", "error" => "Internal Server Error", "message" => $e->getMessage()]);
+            $this->sendResponse("error", "Internal Server Error", [], 500);
         }
     }
 

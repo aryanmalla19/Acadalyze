@@ -1,27 +1,18 @@
 <?php
 namespace App\Middleware;
 
-use App\Core\Auth;
+use App\Core\Middleware;
+use App\Core\Request;
 
-class RoleMiddleware {
-    public static function handle(array $allowedRoles) {
-        $headers = getallheaders();
-        $token = $headers['Authorization'] ?? '';
-
-        if (!$token) {
-            throw new \Exception("Unauthorized: Token required");
+class RoleMiddleware extends Middleware
+{
+    public function handle(Request $request, callable $next, ...$args): array
+    {
+        $requiredRoles = $args[0] ?? [];
+        $userRole = $request->user['role'] ?? 'Guest';
+        if ($userRole && in_array($userRole, $requiredRoles, true)) {
+            return $this->proceed($request, $next);
         }
-
-        $userData = Auth::validateToken(str_replace('Bearer ', '', $token));
-        if (!$userData) {
-            throw new \Exception("Forbidden: Invalid or expired token");
-        }
-
-        // Check if user role is in allowed roles
-        if (!in_array($userData['role'], $allowedRoles)) {
-            throw new \Exception("Forbidden: You do not have permission to access this resource.");
-        }
-
-        return $userData; // Allow request to proceed
+        $this->sendResponse("error", "Forbidden: Insufficient role permissions", [], 403);
     }
-}
+}   

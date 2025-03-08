@@ -1,18 +1,17 @@
 <?php
 namespace App\Core;
 
-class Controller
+abstract class Middleware
 {
-    protected $view;
-
-    public function __construct() {
-        $this->view = new View();
+    public function __construct()
+    {
     }
 
-    public function model($model) {
-        require_once "../app/Models/$model.php";
-        $modelClass = "App\\Models\\$model";
-        return new $modelClass();
+    abstract public function handle(Request $request, callable $next, ...$args): array;
+
+    protected function proceed(Request $request, callable $next): array
+    {
+        return $next($request);
     }
 
     protected function sendResponse($status, $message, $data = [], $code = 200)
