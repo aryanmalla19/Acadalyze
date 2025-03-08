@@ -3,11 +3,8 @@ namespace App\Core;
 
 abstract class Middleware
 {
-    public function __construct()
-    {
-    }
 
-    abstract public function handle(Request $request, callable $next, ...$args): array;
+    abstract public function handle(Request $request, callable $next, ...$args);
 
     protected function proceed(Request $request, callable $next): array
     {
@@ -30,5 +27,13 @@ abstract class Middleware
             "data" => $data
         ]);
         exit();
+    }
+
+    protected function sendError(string $message, int $code): never
+    {
+        http_response_code($code);
+        header('Content-Type: application/json');
+        echo json_encode(['status'=>'error', 'message' => $message]);
+        exit;
     }
 }

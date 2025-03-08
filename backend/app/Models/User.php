@@ -5,11 +5,12 @@ use App\Core\Model;
 class User extends Model {
     protected static string $table = 'users';
     // Get all users
-    public function getAllUsers(): array
+    public function getAllUsersBySchoolId($school_id): array
     {
-        $stmt = $this->db->query("SELECT u.*, NULL as password, r.role_name 
+        $stmt = $this->db->prepare("SELECT u.*, NULL as password, r.role_name 
             FROM users u 
-            LEFT JOIN roles r ON u.role_id = r.role_id");
+            LEFT JOIN roles r ON u.role_id = r.role_id WHERE u.school_id = :school_id");
+        $stmt->execute([':school_id'=> $school_id]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
@@ -91,6 +92,25 @@ class User extends Model {
 
         return $stmt->execute($params);
     }
+
+    public function setSchoolId($userId, $schoolId): bool
+    {
+        $query = "UPDATE users SET school_id = :school_id WHERE user_id = :user_id";
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute([':school_id' => $schoolId, ':user_id' => $userId]);
+    }
+    
+
+    public function getSchoolByUserId($userId): int | bool
+    {
+        $stmt = $this->db->prepare("SELECT school_id FROM users WHERE user_id = :user_id");
+        $stmt->execute([':user_id' => $userId]);
+        
+        $schoolId = $stmt->fetchColumn(); // Fetches a single column value
+    
+        return $schoolId??false;
+    }
+    
 
     public function getUserByEmail($email)
     {

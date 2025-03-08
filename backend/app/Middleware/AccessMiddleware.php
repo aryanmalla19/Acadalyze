@@ -2,69 +2,60 @@
 namespace App\Middleware;
 
 use App\Core\Request;
+use App\Core\Middleware;
 
-class AccessMiddleware
+class AccessMiddleware extends Middleware
 {
-    public function handle(Request $request, callable $next, string $policyClass): mixed
+    public function handle(Request $request, callable $next, ...$args)
     {
-        $authUser = $request->user;
-        if(!$authUser){
-            http_response_code(404);
-            echo json_encode(['status' => 'error', 'error'=> 'Authentication not found' ]);
-            exit();
-        }
+        try {
+            // Check for policy class
+            $policyClass = $args[0]['policy'] ?? $this->sendError("Policy class not specified", 500);
+            $action = $args[0]['action'] ?? 'view';
+            $modelClass = $args[0]['modelClass'] ?? null;
+            $className = basename(str_replace("\\", "/", $modelClass));
 
-        $modelId = $request->getParam('id');
-        if(!$modelId){
-            http_response_code(400);
-            echo json_encode(['status' => 'error', 'error'=> 'Missing model ID']);
-            exit();
+            // Check for authenticated user
+            $authUser = $request->getUser() ?? $this->sendError("Unauthorized", 401);
+
+            $model = null;
+            if (in_array($action, ['view', 'update', 'delete'])) {
+                if (!$modelClass) {
+                    return $this->sendError("$className class required for $action", 500);
+                }
+                $modelId = $request->getParam('id');
+                $model = $modelClass::find($modelId) ?? $this->sendError("$className with ID $modelId not found", 404);
+            }
+
+            // Instantiate policy and validate action method
+            $policy = new $policyClass();
+            if (!method_exists($policy, $action)) {
+                return $this->sendError("Policy missing $action method", 500);
+            }
+
+            // Use reflection to check policy method parameters and invoke
+            $method = new \ReflectionMethod($policy, $action);
+            $params = $method->getParameters();
+
+            if ($model && count($params) == 2) {
+                if (!$method->invoke($policy, $authUser, $model)) {
+                    return $this->sendError("Forbidden", 403);
+                }
+            } elseif (!$model && count($params) == 1) {
+                if (!$method->invoke($policy, $authUser)) {
+                    return $this->sendError("Forbidden", 403);
+                }
+            } else {
+                return $this->sendError("Policy method parameter mismatch", 500);
+            }
+
+            // Proceed to next middleware if all checks pass
+            return $next($request);
+        } catch (\ReflectionException $e) {
+            return $this->sendError("Reflection error: " . $e->getMessage(), 500);
+        } catch (\Throwable $e) {
+            return $this->sendError("Internal Server Error: " . $e->getMessage(), 500);
         }
-        
-        // Resolve model class based on route URI (simplified example)
-        $modelClass = $this->resolveModelClass($request);
-        
-        $model = $modelClass::find($modelId);
-        if(!$model){
-            http_response_code(404);
-            echo json_encode(['status' => 'error', 'error'=> 'Model not found']);
-            exit();
-        }
-        $authUser = $modelClass::find($request->user['user_id']);
-        if (!class_exists($policyClass)) {
-            http_response_code(500);
-            echo json_encode(['status' => 'error', 'error'=> 'Policy class does not exist' ]);
-            exit();
-        }
-        
-        $policyClass = "\\" . $policyClass;
-        $policy = new  $policyClass();
-        if (!method_exists($policy, 'view')) {
-            http_response_code(500);
-            echo json_encode(['status' => 'error', 'error'=> "Policy class must implement view method: $policyClass" ]);
-            exit();
-        }
-        
-        if (!$policy->view($authUser, $model)) {
-            http_response_code(403);
-            echo json_encode(['status' => 'error', 'error'=> 'You are not authorized to access this data' ]);
-            exit();
-        }
-        return $next($request);
     }
 
-    private function resolveModelClass(Request $request): string
-    {
-        $uri = $request->uri;
-        if (str_starts_with($uri, '/api/users')) {
-            return \App\Models\User::class;
-        }
-        if (str_starts_with($uri, '/api/exams')) {
-            return \App\Models\Exam::class;
-        }
-        
-        http_response_code(500);
-        echo json_encode(['status' => 'error', 'error'=> 'Unable to resolve model class for route' ]);
-        exit();
-    }
 }

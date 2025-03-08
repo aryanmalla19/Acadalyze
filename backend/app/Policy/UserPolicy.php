@@ -1,15 +1,19 @@
 <?php
 namespace App\Policy;
 use App\Core\Policy;
-use App\Models\User;
 
 class UserPolicy
 {
-    public function view(User $authUser, User $target): bool
+    public function view($user, $model) 
     {
-        if ($authUser->role === 'Admin') {
-            return $authUser->school_id === $target->school_id;
+        if($user->role_name == 'Admin'){
+            return $user->school_id = $model->school_id;
         }
-        return $authUser->user_id === $target->user_id;
+        return $user->user_id === $model->user_id;
+    }
+    
+    public function update($user, $model) 
+    {
+        return $user->user_id === $model->user_id;
     }
 }

@@ -5,7 +5,7 @@ class Router
 {
     private array $routes = [];
 
-    public function addRoute(string $method, string $path, callable $handler, array $middlewares = []): void
+    public function addRoute(string $method, string $path,  $handler, array $middlewares = []): void
     {
         if (!is_callable($handler)) {
             throw new \InvalidArgumentException("Handler must be callable");
@@ -28,17 +28,18 @@ class Router
         $query = $_GET ?? [];
         $body = $this->getRequestData();
         $request = new Request($requestMethod, $requestUri, $headers, $query, $body);
-
+        
         foreach ($this->routes as $route) {
             if ($route["method"] === $requestMethod && preg_match($route["path"], $requestUri, $matches)) {
+                // var_dump($route['middlewares']);
                 $params = array_filter($matches, "is_string", ARRAY_FILTER_USE_KEY);
                 $request->params = $params;
-
+                
                 $finalHandler = function (Request $req) use ($route, $params) {
                     // Use reflection to get handler parameter names
                     $reflection = is_array($route["handler"])
-                        ? new \ReflectionMethod($route["handler"][0], $route["handler"][1])
-                        : new \ReflectionFunction($route["handler"]);
+                    ? new \ReflectionMethod($route["handler"][0], $route["handler"][1])
+                    : new \ReflectionFunction($route["handler"]);
                     $handlerParams = [];
                     foreach ($reflection->getParameters() as $param) {
                         $name = $param->getName();

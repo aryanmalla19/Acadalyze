@@ -16,29 +16,46 @@ $router = new Router();
 $userController = new UserController();
 
 $authController = new AuthController();
-// $schoolController = new SchoolController();
+$schoolController = new SchoolController();
 
 $router->addRoute("POST", "/api/login", [$authController, "login"]);
 $router->addRoute("POST", "/api/register", [$authController, "register"]);
 
 
-$router->addRoute("GET", "/api/users", [$userController, "getAllUsers"], [
+$router->addRoute("GET", "/api/users", [$userController, "getAllUsersBySchoolId"], [
     [\App\Middleware\AuthMiddleware::class],
     [\App\Middleware\RoleMiddleware::class, [['Admin']]],
 ]);
 
 $router->addRoute("GET", "/api/users/{id}", [$userController, "getUserById"], [
     [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\AccessMiddleware::class, [\App\Policy\UserPolicy::class]]
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\UserPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\User::class]]]
 ]);
 
 $router->addRoute("PUT", "/api/users/{id}", [$userController, "updateUser"], [
     [\App\Middleware\AuthMiddleware::class],
     [\App\Middleware\AccessMiddleware::class, [\App\Policy\UserPolicy::class]]
+
 ]);
+
 $router->addRoute("DELETE", "/api/users/{id}", [$userController, "deleteUser"], [
     [\App\Middleware\AuthMiddleware::class],
     [\App\Middleware\AccessMiddleware::class, [\App\Policy\UserPolicy::class]]
+
 ]);
 
+$router->addRoute('GET', '/api/users/{id}', [$userController, 'getUserById'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\UserPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\User::class]]]
+]);
+
+$router->addRoute("GET", "/api/schools/{id}", [$schoolController, 'getSchool'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\SchoolPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\School::class]]]
+]);
+
+$router->addRoute("POST", "/api/schools", [$schoolController, 'createSchool'], [
+    [\App\Middleware\AuthMiddleware::class],
+]);
+    
 $router->route();

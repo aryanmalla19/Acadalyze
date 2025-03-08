@@ -59,4 +59,9 @@ class Request
     {
         return stripos($this->getContentType() ?? '', 'application/json') !== false;
     }
+    public function getUser()
+    {
+        $userId = $this->user['user_id'];
+        return \App\Models\User::find($userId);
+    }
 }

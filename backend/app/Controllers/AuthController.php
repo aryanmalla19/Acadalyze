@@ -38,7 +38,7 @@ class AuthController extends Controller
         }
 
         try {
-            $token = Auth::generateToken($userData['role_name'], $userData['user_id'], $data['school_id'], $data['identifier']);
+            $token = Auth::generateToken($userData['role_name'], $userData['user_id'], $userData['school_id'], $data['identifier']);
             $this->sendResponse("success", "Login successful", ["token" => $token]);
         } catch (Exception $e) {
             $this->sendResponse("error", "Internal Server Error", [], 500);

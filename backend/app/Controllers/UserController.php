@@ -14,10 +14,18 @@ class UserController extends Controller
         $this->userModel = $this->model('User');
     }
 
-    public function getAllUsers()
+    public function getAllUsersBySchoolId(Request $request)
     {
-        $users = $this->userModel->getAllUsers();
-        $this->sendResponse("success", "All Users data fetched successfully", $users);
+        $school_id = $request->user['school_id'];
+        if(!$school_id){
+            $this->sendResponse("error", "You are not asssociated with any school", $users);
+        }
+        $users = $this->userModel->getAllUsersBySchoolId($school_id);
+        if(!empty($users)){
+            $this->sendResponse("success", "All Users data fetched successfully", $users);
+        }
+        $this->sendResponse("error", "No Users data found", null, 404);
+
     }
 
     // Route params injected directly as $id

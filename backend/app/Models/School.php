@@ -30,7 +30,8 @@ class School extends Model
         $stmt->bindParam(':telephone_number', $telephone);
         $stmt->bindParam(':address', $address);
 
-        return $stmt->execute(); // Returns true if successful
+        $stmt->execute(); // Returns true if successful
+        return $this->db->lastInsertId();
     }
 
     public function updateSchool($id, $schoolName, $schoolEmail, $establishedDate, $telephone, $address)
@@ -52,6 +53,41 @@ class School extends Model
 
         return $stmt->execute(); // Returns true if successful
     }
+
+
+    public static function find(string $id): ?static
+    {
+        if (!isset(static::$pdo)) {
+            throw new \RuntimeException("Database connection not initialized");
+        }
+
+        $stmt = static::$pdo->prepare("SELECT * FROM schools WHERE school_id = :school_id LIMIT 1");
+        $stmt->execute([':school_id' => (int)$id]); // Cast to int for numeric IDs
+        $data = $stmt->fetch(\PDO::FETCH_ASSOC);
+        if ($data === false) {
+            return null;
+        }
+        
+        // Create an instance and populate it
+        $instance = new static();
+        foreach ($data as $key => $value) {
+            $instance->$key = $value;
+        }
+        return $instance;
+    }
+
+    public function getSchoolByEmail($email)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM schools WHERE school_email = :email");
+        $stmt->execute([
+            ':email' => $email,
+        ]);
+        $school = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return $school ?: false;
+    }
+
+
+
 
     public function deleteSchool($id)
     {
