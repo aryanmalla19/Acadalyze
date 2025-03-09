@@ -132,6 +132,24 @@ class User extends Model {
         return $user ?: false;
     }
 
+    public function countUsersBySchoolId($school_id)
+    {
+        // Prepare the SQL query to count users by school_id
+        $sql = "SELECT COUNT(*) FROM users WHERE school_id = :school_id";
+
+        // Execute the query
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':school_id', $school_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Fetch the result, which is a single row with a single value (the count)
+        $count = $stmt->fetchColumn();
+
+        // Return the count of users
+        return $count;
+    }
+
+
     public function getUserByIdentifier(string $identifier)
     {
         $sql = "SELECT u.*, r.role_name 

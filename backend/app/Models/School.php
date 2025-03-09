@@ -34,24 +34,31 @@ class School extends Model
         return $this->db->lastInsertId();
     }
 
-    public function updateSchool($id, $schoolName, $schoolEmail, $establishedDate, $telephone, $address)
+    public function updateSchool(string $id, array $data): bool
     {
-        $stmt = $this->db->prepare("UPDATE schools SET 
-            school_name = :school_name, 
-            school_email = :school_email, 
-            established_date = :established_date, 
-            telephone_number = :telephone_number, 
-            address = :address 
-            WHERE school_id = :school_id");
+        if (empty($data)) {
+            return false; // Nothing to update
+        }
 
-        $stmt->bindParam(':school_id', $id, \PDO::PARAM_INT);
-        $stmt->bindParam(':school_name', $schoolName);
-        $stmt->bindParam(':school_email', $schoolEmail);
-        $stmt->bindParam(':established_date', $establishedDate);
-        $stmt->bindParam(':telephone_number', $telephone);
-        $stmt->bindParam(':address', $address);
+        // Define allowed fields to prevent updating sensitive columns (e.g., role, school_id)
+        $allowedFields = ['school_email', 'school_name', 'address', 'established_date', 'telephone_number']; // Adjust based on your schema
+        $updateFields = array_intersect_key($data, array_flip($allowedFields));
 
-        return $stmt->execute(); // Returns true if successful
+        if (empty($updateFields)) {
+            return false; // No valid fields to update
+        }
+
+        // Build the SET clause dynamically
+        $setClause = implode(', ', array_map(fn($key) => "$key = :$key", array_keys($updateFields)));
+        $query = "UPDATE schools SET $setClause WHERE school_id = :id";
+
+        $stmt = $this->db->prepare($query);
+        $params = array_merge([':id' => $id], array_combine(
+            array_map(fn($key) => ":$key", array_keys($updateFields)),
+            array_values($updateFields)
+        ));
+
+        return $stmt->execute($params);
     }
 
 
@@ -85,9 +92,6 @@ class School extends Model
         $school = $stmt->fetch(\PDO::FETCH_ASSOC);
         return $school ?: false;
     }
-
-
-
 
     public function deleteSchool($id)
     {

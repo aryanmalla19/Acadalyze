@@ -18,6 +18,6 @@ class AuthMiddleware extends Middleware
                 return $this->proceed($request, $next);
             }
         }
-        $this->sendResponse("error", "Unauthorized", [], 401);
+        $this->sendResponse("error", "Unauthorized! Token is expired or invalid. Please log in again.", [], 401);
     }
 }
