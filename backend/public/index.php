@@ -11,12 +11,14 @@ use App\Core\Router;
 use App\Controllers\UserController;
 use App\Controllers\AuthController;
 use App\Controllers\SchoolController;
+use App\Controllers\RoleController;
 
 $router = new Router();
 
 $userController = new UserController();
 $authController = new AuthController();
 $schoolController = new SchoolController();
+$roleController = new RoleController();
 
 // AUTH
 $router->addRoute("POST", "/api/login", [$authController, "login"]);
@@ -71,6 +73,15 @@ $router->addRoute("DELETE", '/api/schools/{id}', [$schoolController, 'deleteScho
     [\App\Middleware\AuthMiddleware::class],
     [\App\Middleware\RoleMiddleware::class, [['Admin']]],
     [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\SchoolPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\School::class]]]
+]);
+
+// ROLES
+$router->addRoute("GET", '/api/roles/{id}', [$roleController, 'show'], [
+    [\App\Middleware\AuthMiddleware::class],
+]);
+
+$router->addRoute("POST", '/api/roles/{id}', [$roleController, 'create'], [
+    [\App\Middleware\AuthMiddleware::class]
 ]);
 
 $router->route();
