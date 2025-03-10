@@ -7,6 +7,12 @@
 http://localhost:8080/
 ```
 
+## Authorization
+All endpoints require an Authorization token in the headers:
+```
+Authorization: Bearer <token>
+```
+
 ## Endpoints
 
 ### 1. User Login
@@ -84,3 +90,155 @@ Registers a new user.
     "error": "Username is already registered"
 }
 ```
+
+
+### 3. Get All Users by School ID
+**Endpoint:**
+```
+GET /api/users
+```
+**Description:** Retrieves all users associated with the authenticated user's school.
+
+**Request Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Response:**
+- **Success (200):**
+```json
+{
+  "status": "success",
+  "message": "All Users data fetched successfully",
+  "data": [ { "id": "1", "name": "John Doe", ... } ]
+}
+```
+- **Error (404):**
+```json
+{
+  "status": "error",
+  "message": "No Users data found"
+}
+```
+
+---
+
+### 4. Get User by ID
+**Endpoint:**
+```
+GET /api/users/{id}
+```
+**Description:** Retrieves user details by user ID.
+
+**Response:**
+- **Success (200):**
+```json
+{
+  "status": "success",
+  "message": "User data fetched successfully",
+  "data": { "id": "1", "name": "John Doe" }
+}
+```
+- **Error (404):**
+```json
+{
+  "status": "error",
+  "message": "User with ID {id} does not exist",
+  "data": []
+}
+```
+
+---
+
+### 5. Update User
+**Endpoint:**
+```
+PUT /api/users/{id}
+```
+**Description:** Updates a user's information.
+
+**Request Headers:**
+```
+Authorization: Bearer <token>
+Content-Type: application/json
+```
+
+**Request Body:** (any field can be updated)
+```json
+{
+  "email": "user@example.com",
+  "username": "newUsername",
+  "first_name": "John",
+  "last_name": "Doe",
+  "address": "123 Street",
+  "phone_number": "1234567890"
+}
+```
+
+**Response:**
+- **Success (200):**
+```json
+{
+  "status": "success",
+  "message": "User updated successfully",
+  "data": { "email": "user@example.com" }
+}
+```
+- **Validation Error (400):**
+```json
+{
+  "status": "error",
+  "message": "Validation failed",
+  "data": { "phone_number": "Invalid format" }
+}
+```
+- **Conflict (409):**
+```json
+{
+  "status": "error",
+  "message": "Email already exists",
+  "data": null
+}
+```
+
+---
+
+### 6. Delete User
+**Endpoint:**
+```
+DELETE /users/{id}
+```
+**Description:** Deletes a user by ID.
+
+**Response:**
+- **Success (200):**
+```json
+{
+  "status": "success",
+  "message": "User deleted successfully",
+  "data": "1"
+}
+```
+- **Error (404):**
+```json
+{
+  "status": "error",
+  "message": "Could not find User with ID {id}",
+  "data": false
+}
+```
+
+## Error Codes
+| Code | Message                   |
+|------|---------------------------|
+| 400  | Validation failed         |
+| 404  | Resource not found        |
+| 409  | Conflict (duplicate data) |
+| 500  | Internal server error     |
+
+
+
+
+### Author: Aryan Malla
+### Last Updated: March 2025
+
