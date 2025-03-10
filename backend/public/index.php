@@ -12,6 +12,7 @@ use App\Controllers\UserController;
 use App\Controllers\AuthController;
 use App\Controllers\SchoolController;
 use App\Controllers\RoleController;
+use App\Controllers\ClassesController;
 
 $router = new Router();
 
@@ -19,6 +20,7 @@ $userController = new UserController();
 $authController = new AuthController();
 $schoolController = new SchoolController();
 $roleController = new RoleController();
+$classesController = new ClassesController();
 
 // AUTH
 $router->addRoute("POST", "/api/login", [$authController, "login"]);
@@ -84,4 +86,32 @@ $router->addRoute("POST", '/api/roles/{id}', [$roleController, 'create'], [
     [\App\Middleware\AuthMiddleware::class]
 ]);
 
+// CLASSES
+$router->addRoute("GET", '/api/classes', [$classesController, 'index'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin']]],
+]);
+
+
+$router->addRoute("GET", '/api/classes/{id}', [$classesController, 'show'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\ClassesPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Classes::class]]]
+]);
+
+$router->addRoute("POST", '/api/classes', [$classesController, 'create'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin']]]
+]);
+
+$router->addRoute("PUT", '/api/classes/{id}', [$classesController, 'update'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin']]],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\ClassesPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Classes::class]]]
+]);
+
+$router->addRoute("DELETE", '/api/classes/{id}', [$classesController, 'destroy'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin']]],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\ClassesPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Classes::class]]]
+]);
 $router->route();
