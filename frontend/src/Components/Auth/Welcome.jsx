@@ -1,15 +1,19 @@
 import React from "react";
 
-const Welcome = () => {
+const Welcome = ({ isLoggedIn, toggleAuthMode }) => {
   return (
-    <div
-      className="bg-[#7494ec] text-white p-10 md:w-2/3 w-full flex flex-col justify-center items-center 
-            rounded-b-[100px] md:rounded-r-[150px] md:rounded-l-none transition-all duration-500"
-    >
-      <h1 className="font-bold text-4xl text-center mb-6">Hello, Welcome!</h1>
-      <p className="font-semibold text-xl mb-6">Don't have an account?</p>
-      <button className="p-2 border-2 border-white w-30 rounded-[10px] hover:bg-white hover:text-[#7494ec] transition-all cursor-pointer font-semibold">
-        Register
+    <div className="flex flex-col justify-center items-center">
+      <h1 className="font-bold text-4xl text-center mb-6">
+        {isLoggedIn ? "Hello, Welcome!" : "Welcome Back!"}
+      </h1>
+      <p className="font-semibold text-xl mb-6">
+        {isLoggedIn ? "Don't have an account?" : "Already have an account?"}
+      </p>
+      <button
+        onClick={toggleAuthMode}
+        className="p-2 border-2 border-white w-30 rounded-[10px] hover:bg-white hover:text-[#7494ec] transition-all cursor-pointer font-semibold"
+      >
+        {isLoggedIn ? "Register" : "Login"}
       </button>
     </div>
   );

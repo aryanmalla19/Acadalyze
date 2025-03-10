@@ -10,6 +10,7 @@ import Page4 from "./Pages/Page4";
 
 import Sidebar from "./Components/Sidebar/Sidebar";
 import Auth from "./Pages/Auth";
+import MainLayout from "./Layout/MainLayout";
 
 const App = () => {
   // return (
@@ -33,7 +34,12 @@ const App = () => {
   // );
   return (
     <div>
-      <Auth />
+      <Routes>
+        <Route path="/" element={<Auth />} />
+        <Route element={<MainLayout />}>
+          <Route path="/home" element={<Home />} />
+        </Route>
+      </Routes>
     </div>
   );
 };
