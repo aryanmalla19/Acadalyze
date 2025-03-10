@@ -13,25 +13,6 @@ import Auth from "./Pages/Auth";
 import MainLayout from "./Layout/MainLayout";
 
 const App = () => {
-  // return (
-  //   <div className="flex h-screen overflow-hidden">
-  //     <div className="fixed inset-0 z-0">
-  //       <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-300 to-blue-900 opacity-80" />
-  //       <div className="absolute inset-0 backdrop-blur-sm" />
-  //     </div>
-
-  //     <Sidebar />
-
-  //     <Routes>
-  //       <Route path="/" element={<Home />} />
-  //       <Route path="/signup" element={<LoginSignup />} />
-  //       <Route path="/page1" element={<Page1 />} />
-  //       <Route path="/page2" element={<Page2 />} />
-  //       <Route path="/page3" element={<Page3 />} />
-  //       <Route path="/page4" element={<Page4 />} />
-  //     </Routes>
-  //   </div>
-  // );
   return (
     <div>
       <Routes>
