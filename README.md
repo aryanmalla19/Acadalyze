@@ -86,7 +86,7 @@ Acadalyze/
 ### Adding Dependencies
 
 - For PHP dependencies, use Composer in the `backend/` directory and commit the `composer.json` and `composer.lock` files (but ignore `vendor/` in `.gitignore`).
-- For frontend dependencies, use npm or Yarn in the `frontend/` directory, committing `package.json` and `package-lock.json` (but ignoring `node_modules/`).
+- For frontend dependencies, use npm or Yarn install in the `frontend/` directory, committing `package.json` and `package-lock.json` (but ignoring `node_modules/`).
 
 ## Contact
 
