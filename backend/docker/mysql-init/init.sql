@@ -99,6 +99,7 @@ CREATE TABLE student_classes (
 INSERT INTO roles (role_name) VALUES
 ('Student'),
 ('Teacher'),
+('Parents'),
 ('Admin');
 
 INSERT INTO schools (school_name, school_email, established_date, telephone_number, address) VALUES
