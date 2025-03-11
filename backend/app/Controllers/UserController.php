@@ -14,22 +14,24 @@ class UserController extends Controller
         $this->userModel = $this->model('User');
     }
 
-    public function getAllUsersBySchoolId(Request $request)
+    public function index(Request $request): void
     {
         $school_id = $request->user['school_id'];
+
         if(!$school_id){
             $this->sendResponse("error", "You are not asssociated with any school", $users);
         }
+        
         $users = $this->userModel->getAllUsersBySchoolId($school_id);
+        
         if(!empty($users)){
             $this->sendResponse("success", "All Users data fetched successfully", $users);
         }
-        $this->sendResponse("error", "No Users data found", null, 404);
 
+        $this->sendResponse("error", "No Users data found", null, 404);
     }
 
-    // Route params injected directly as $id
-    public function getUserById(string $id)
+    public function show(Request $request, string $id): void 
     {
         $user = $this->userModel->getUserById($id);
         if ($user) {
@@ -38,7 +40,8 @@ class UserController extends Controller
             $this->sendResponse("error", "User with ID $id does not exist", [], 404);
         }
     }
-    public function updateUser(Request $request, string $id): void
+
+    public function update(Request $request, string $id): void
     {
         $data = $request->body;
 
@@ -71,14 +74,12 @@ class UserController extends Controller
             }
         }
 
-
         if(!empty($data['username'])){
             $existedUser =  $this->userModel->getUserByUsername($data['username']);
             if($existedUser){
                 $this->sendResponse("error", "Username already exists", null, 409);
                 }
         }
-
 
         try {
             $this->userModel->updateUser($id, $data);
@@ -103,8 +104,7 @@ class UserController extends Controller
         }
     }
 
-    // Route param $id only
-    public function deleteUser(string $id)
+    public function destroy(string $id): void
     {
         if ($this->userModel->deleteUser($id)) {
             $this->sendResponse("success", "User deleted successfully", $id);

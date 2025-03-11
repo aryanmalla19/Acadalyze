@@ -4,13 +4,7 @@ use App\Core\Model;
 
 class School extends Model
 {
-    public function getAllSchools()
-    {
-        $stmt = $this->db->query("SELECT * FROM schools");
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?? null;
-    }
-
-    public function getSchoolById($id)
+    public function findById($id)
     {
         $stmt = $this->db->prepare("SELECT * FROM schools WHERE school_id = :school_id");
         $stmt->bindParam(':school_id', $id, \PDO::PARAM_INT);
@@ -18,7 +12,7 @@ class School extends Model
         return $stmt->fetch(\PDO::FETCH_ASSOC) ?? null;
     }
 
-    public function createSchool($schoolName, $schoolEmail, $establishedDate, $telephone, $address)
+    public function create($schoolName, $schoolEmail, $establishedDate, $telephone, $address)
     {
         $stmt = $this->db->prepare("INSERT INTO schools 
             (school_name, school_email, established_date, telephone_number, address) 
@@ -34,12 +28,8 @@ class School extends Model
         return $this->db->lastInsertId();
     }
 
-    public function updateSchool(string $id, array $data): bool
+    public function updateById(string $id, array $data): bool
     {
-        if (empty($data)) {
-            return false; // Nothing to update
-        }
-
         // Define allowed fields to prevent updating sensitive columns (e.g., role, school_id)
         $allowedFields = ['school_email', 'school_name', 'address', 'established_date', 'telephone_number']; // Adjust based on your schema
         $updateFields = array_intersect_key($data, array_flip($allowedFields));
@@ -64,10 +54,6 @@ class School extends Model
 
     public static function find(string $id): ?static
     {
-        if (!isset(static::$pdo)) {
-            throw new \RuntimeException("Database connection not initialized");
-        }
-
         $stmt = static::$pdo->prepare("SELECT * FROM schools WHERE school_id = :school_id LIMIT 1");
         $stmt->execute([':school_id' => (int)$id]); // Cast to int for numeric IDs
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -83,7 +69,7 @@ class School extends Model
         return $instance;
     }
 
-    public function getSchoolByEmail($email)
+    public function getByEmail($email)
     {
         $stmt = $this->db->prepare("SELECT * FROM schools WHERE school_email = :email");
         $stmt->execute([
@@ -93,7 +79,7 @@ class School extends Model
         return $school ?: false;
     }
 
-    public function deleteSchool($id)
+    public function deleteById($id)
     {
         $stmt = $this->db->prepare("DELETE FROM schools WHERE school_id = :school_id");
         $stmt->bindParam(':school_id', $id, \PDO::PARAM_INT);

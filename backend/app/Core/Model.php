@@ -6,8 +6,7 @@ use PDOException;
 
 class Model {
     protected PDO $db;
-    protected static PDO $pdo; // Database connection
-    protected static string $table; // Table name, set by child classes
+    protected static PDO $pdo; 
     protected array $errors = [];
 
     public function __construct() {
@@ -20,7 +19,6 @@ class Model {
             die(json_encode(["message" => "Database connection failed: " . $e->getMessage()]));
         }
     }
-
 
     public function validate(array $data, array $rules): bool {
         $this->errors = [];

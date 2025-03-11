@@ -2,7 +2,7 @@
 namespace App\Policy;
 use App\Core\Policy;
 
-class SchoolPolicy
+class SchoolPolicy implements Policy
 {
     public function view($user, $model) 
     {

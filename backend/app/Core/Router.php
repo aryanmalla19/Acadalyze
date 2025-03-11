@@ -31,7 +31,6 @@ class Router
         
         foreach ($this->routes as $route) {
             if ($route["method"] === $requestMethod && preg_match($route["path"], $requestUri, $matches)) {
-                // var_dump($route['middlewares']);
 
                 $params = array_filter($matches, "is_string", ARRAY_FILTER_USE_KEY);
                 $request->params = $params;
