@@ -3,7 +3,6 @@ namespace App\Models;
 use App\Core\Model;
 
 class User extends Model {
-    protected static string $table = 'users';
     // Get all users
     public function getAllUsersBySchoolId($school_id): array
     {
@@ -51,7 +50,7 @@ class User extends Model {
 
     public function createUser(array $data): bool
     {
-        $stmt = $this->db->prepare("INSERT INTO users (email, password, username, first_name, last_name, address, phone_number, parent_phone_number, date_of_birth ) VALUES (:email, :password, :username, :first_name, :last_name, :address, :phone_number, :parent_phone_number, :date_of_birth)");
+        $stmt = $this->db->prepare("INSERT INTO users (email, password, username, first_name, last_name, address, phone_number, parent_phone_number, date_of_birth, role_id ) VALUES (:email, :password, :username, :first_name, :last_name, :address, :phone_number, :parent_phone_number, :date_of_birth, :role_id)");
         return $stmt->execute([
             ':email' => $data['email'],
             ':password' => $data['password'],
@@ -62,6 +61,7 @@ class User extends Model {
             ':phone_number' => $data['phone_number'],
             ':parent_phone_number' => $data['parent_phone_number'],
             ':date_of_birth' => $data['date_of_birth'],
+            ':role_id' => $data['role_id'],
         ]);
     }
 

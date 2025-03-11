@@ -2,11 +2,11 @@
 namespace App\Controllers;
 
 use App\Models\User;
+use App\Models\Role;
 use App\Core\Auth;
 use App\Core\Request;
 use App\Core\Controller;
 use Exception;
-
 
 class AuthController extends Controller
 {
@@ -53,6 +53,7 @@ class AuthController extends Controller
             'phone_number' => '',
             'parent_phone_number' => '',
             'date_of_birth' => '',
+            'role' => '',
         ];
 
         // Define validation rules
@@ -65,17 +66,20 @@ class AuthController extends Controller
             'address' => 'required|min:3|max:20',
             'phone_number' => 'required|min:6|max:10',
             'date_of_birth' => 'required',
+            'role' => 'required',
         ];
 
         // Validate the data
         $user = new User();
+        $role = new Role();
         if (!$user->validate($data, $rules)) {
             $this->sendResponse("error", $user->getErrors(), [], 400);
         }
 
-        // Hash the password before passing it to the model
-        $hashedPassword = password_hash($data['password'], PASSWORD_BCRYPT);
-
+        $userRole = $role->getIdByRole($data['role']);
+        if(empty($userRole)){
+            $this->sendResponse("error", "Inavlid role. Role must be Admin | Student | Teacher | Parents", [], 400);
+        }
         try {
             // Check if email is already registered
             if ($user->getUserByEmail($data['email'])) {
@@ -86,6 +90,9 @@ class AuthController extends Controller
             if ($user->getUserByUsername($data['username'])) {
                 $this->sendResponse("error", "Username is already registered", [], 409);
             }
+            
+            // Hash the password before passing it to the model
+            $hashedPassword = password_hash($data['password'], PASSWORD_BCRYPT);
 
             // Create the new user
             $newUser = $user->createUser([
@@ -98,8 +105,8 @@ class AuthController extends Controller
                 'date_of_birth' => $data['date_of_birth'],
                 'phone_number' => $data['phone_number'],
                 'parent_phone_number' => $data['parent_phone_number'],
+                'role_id' => $userRole['role_id']
             ]);
-
             $this->sendResponse("success", "Registration successful", $newUser);
         } catch (Exception $e) {
             $this->sendResponse("error", "Internal Server Error", [], 500);

@@ -20,4 +20,12 @@ class Role extends Model
         $stmt = $this->db->prepare("INSERT INTO roles (role_name) VALUES (:role_name)");
         return $stmt->execute([':role_name' => $roleName]);
     }
+
+    public function getIdByRole($roleName)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM roles WHERE role_name = :role_name LIMIT 1");
+        $stmt->execute([':role_name' => $roleName]);
+        return $stmt->fetch(\PDO::FETCH_ASSOC) ?? null;
+    }
+
 }
