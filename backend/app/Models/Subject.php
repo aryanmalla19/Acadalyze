@@ -65,6 +65,26 @@ class Subject extends Model
     }
 
 
+    public static function find(string $id): ?static
+    {
+        if (!isset(static::$pdo)) {
+            throw new \RuntimeException("Database connection not initialized");
+        }
+
+        $stmt = static::$pdo->prepare("SELECT * FROM subjects WHERE subject_id = :subject_id LIMIT 1");
+        $stmt->execute([':subject_id' => (int)$id]); // Cast to int for numeric IDs
+        $data = $stmt->fetch(\PDO::FETCH_ASSOC);
+        if ($data === false) {
+            return null;
+        }
+        // Create an instance and populate it
+        $instance = new static();
+        foreach ($data as $key => $value) {
+            $instance->$key = $value;
+        }
+        return $instance;
+    }
+
     public function delete($id)
     {
         $stmt = $this->db->prepare("DELETE FROM subjects WHERE subject_id = :id");

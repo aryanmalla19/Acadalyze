@@ -135,25 +135,25 @@ $router->addRoute("GET", '/api/subjects', [$subjectController, 'index'], [
 ]);
 
 $router->addRoute("GET", '/api/subjects/{id}', [$subjectController, 'show'], [
-    [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\ClassesPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Classes::class]]]
+    [\App\Middleware\AuthMiddleware::class], 
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\SubjectPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Subject::class]]]
 ]);
 
 $router->addRoute("POST", '/api/subjects', [$subjectController, 'create'], [
     [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\RoleMiddleware::class, [['Admin']]]
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
 ]);
 
 $router->addRoute("PUT", '/api/subjects/{id}', [$subjectController, 'update'], [
     [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\RoleMiddleware::class, [['Admin']]],
-    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\ClassesPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Classes::class]]]
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\SubjectPolicy::class, 'action' => 'update', 'modelClass' => \App\Models\Subject::class]]]
 ]);
 
 $router->addRoute("DELETE", '/api/subjects/{id}', [$subjectController, 'destroy'], [
     [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\RoleMiddleware::class, [['Admin']]],
-    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\ClassesPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Classes::class]]]
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\SubjectPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Subject::class]]]
 ]);
 
 $router->route();
