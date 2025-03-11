@@ -50,6 +50,7 @@ class Request
     {
         return strtoupper($this->method) === strtoupper($method);
     }
+    
     public function getContentType(): ?string
     {
         return $this->getHeader('Content-Type');
@@ -59,6 +60,7 @@ class Request
     {
         return stripos($this->getContentType() ?? '', 'application/json') !== false;
     }
+
     public function getUser()
     {
         $userId = $this->user['user_id'];

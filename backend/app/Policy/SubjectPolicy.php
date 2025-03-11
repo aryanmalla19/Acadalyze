@@ -4,7 +4,7 @@ namespace App\Policy;
 use App\Core\Policy;
 use App\Models\Classes;
 
-class SubjectPolicy
+class SubjectPolicy implements Policy
 {
     public function view($user, $model) 
     {

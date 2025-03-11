@@ -50,7 +50,7 @@ class AccessMiddleware extends Middleware
             }
 
             // Proceed to next middleware if all checks pass
-            return $next($request);
+            return $this->proceed($request, $next);
         } catch (\ReflectionException $e) {
             return $this->sendError("Reflection error: " . $e->getMessage(), 500);
         } catch (\Throwable $e) {

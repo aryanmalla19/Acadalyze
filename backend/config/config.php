@@ -7,4 +7,4 @@ define('DB_NAME', getenv('MYSQL_DATABASE') ?: 'acadalyze');
 
 define('JWT_SECRET', 'my_super_secret_key'); // Change this to a secure key
 define('JWT_ALGO', 'HS256'); // Algorithm used for signing JWT
-define('JWT_EXPIRATION', 3600); // Token expiration time (1 hour)
+define('JWT_EXPIRATION', 3600 * 24); // Token expiration time (1 day)

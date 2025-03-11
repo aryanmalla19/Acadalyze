@@ -1,9 +1,9 @@
 <?php
 namespace App\Policy;
 
-// use App\Core\Policy;
+use App\Core\Policy;
 
-class ClassesPolicy 
+class ClassesPolicy implements Policy
 {
     public function view($user, $model) 
     {
