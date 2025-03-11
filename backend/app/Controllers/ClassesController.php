@@ -14,7 +14,7 @@ class ClassesController extends Controller
         $this->classesModel = $this->model('Classes');
     }
 
-    public function show(Request $request, $id)
+    public function show(Request $request, $id): void
     {
         $class = $this->classesModel->findById($id);
         if(!$class){
@@ -23,7 +23,7 @@ class ClassesController extends Controller
         $this->sendResponse("success", "Class with ID $id fetched", $class); 
     }
 
-    public function index(Request $request)
+    public function index(Request $request): void
     {
         $schoolId = User::find($request->user['user_id'])->school_id;
         $classes = $this->classesModel->getAllBySchoolId($schoolId);
@@ -33,7 +33,7 @@ class ClassesController extends Controller
         $this->sendResponse("success", "All Classes successfully fetched", $classes); 
     }
 
-    public function create(Request $request)
+    public function create(Request $request): void
     {
         $data = $request->body;
         $rules = [
@@ -44,6 +44,7 @@ class ClassesController extends Controller
 
         $teacherSchoolId = User::find($data['class_teacher_id'])->school_id;
         $adminSchoolId = User::find($request->user['user_id'])->school_id;
+
         if($adminSchoolId != $teacherSchoolId){
             $this->sendResponse("error", "Cannot assign teacher of another school", null, 400); 
         }
@@ -59,16 +60,19 @@ class ClassesController extends Controller
         if(!$this->classesModel->validate($data, $rules)){
             $this->sendResponse("error", "Invalid Entry", $this->classesModel->getErrors(), 400); 
         }
+
         $newClass = $this->classesModel->create($data['class_teacher_id'], $data['school_id'], $data['class_name']);
         if($newClass){
             $this->sendResponse("success", "New Class Created with ID $newClass", null); 
         }
+
         $this->sendResponse("error", "Some error occured", null, 500); 
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id):void 
     {
         $data = $request->body;
+
         if(!empty($data['class_teacher_id'])){
             $teacher = User::find($data['class_teacher_id']);
             $admin = User::find($request->user['user_id']);
@@ -89,14 +93,13 @@ class ClassesController extends Controller
         } catch (\InvalidArgumentException $e) {
             $this->sendResponse("error", $e->getMessage(), [], 400);
         } catch (\PDOException $e) {
-            // Handle SQL-specific errors like duplicates
             if ($e->getCode() === '23000' && strpos($e->getMessage(), 'Duplicate entry') !== false) {
                 $field = $this->extractDuplicateField($e->getMessage());
                 $this->sendResponse(
                     "error",
                     "Duplicate value detected",
                     ['field' => $field, 'value' => $data[$field] ?? 'unknown'],
-                    409 // Conflict status code
+                    409
                 );
             } else {
                 $this->sendResponse("error", "Database error occurred", ['details' => $e->getMessage()], 500);
@@ -106,13 +109,12 @@ class ClassesController extends Controller
         }
     }
 
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request, $id): void
     {
-        $deletedId = $this->classesModel->delete($id);
+        $deletedId = $this->classesModel->deleteById($id);
         if(!$deletedId){
             $this->sendResponse("error", "Class with ID $id not found", [], 404);
         }
         $this->sendResponse("sucess", "Successfully Deleted Class with ID $id", $deletedId);
     }
-
 }

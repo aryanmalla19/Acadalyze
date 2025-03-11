@@ -10,9 +10,10 @@ use Exception;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(Request $request): void
     {
         $data = $request->body;
+
         if (empty($data['identifier'])) {
             $this->sendResponse("error", "Email or username is required", [], 400);
         }
@@ -21,9 +22,7 @@ class AuthController extends Controller
         }
 
         $user = new User();
-    
-        // Check credentials using the identifier (email or username)
-        $userData = $user->getUserByIdentifier($data['identifier']);
+        $userData = $user->getByIdentifier($data['identifier']);
 
         if(!$userData){
             $this->sendResponse("error", "Email or username does not exists", null, 404);
@@ -41,7 +40,7 @@ class AuthController extends Controller
         }
     }
 
-    public function register(Request $request)
+    public function register(Request $request): void
     {
         $data = $request->body + [
             'email' => '',
@@ -60,34 +59,37 @@ class AuthController extends Controller
         $rules = [
             'email' => 'required|email',
             'password' => 'required|min:6|max:30',
-            'username' => 'required|min:6|max:20',
+            'username' => 'required|min:3|max:20',
             'first_name' => 'required|min:2|max:30',
             'last_name' => 'required|min:2|max:30',
             'address' => 'required|min:3|max:20',
-            'phone_number' => 'required|min:6|max:10',
+            'phone_number' => 'required|min:5|max:10',
             'date_of_birth' => 'required',
             'role' => 'required',
         ];
 
         // Validate the data
         $user = new User();
-        $role = new Role();
+        
         if (!$user->validate($data, $rules)) {
             $this->sendResponse("error", $user->getErrors(), [], 400);
         }
-
+        
+        $role = new Role();
         $userRole = $role->getIdByRole($data['role']);
+
         if(empty($userRole)){
             $this->sendResponse("error", "Inavlid role. Role must be Admin | Student | Teacher | Parents", [], 400);
         }
+
         try {
             // Check if email is already registered
-            if ($user->getUserByEmail($data['email'])) {
+            if ($user->getByEmail($data['email'])) {
                 $this->sendResponse("error", "Email is already registered", [], 409);
             }
 
             // Check if username is already registered
-            if ($user->getUserByUsername($data['username'])) {
+            if ($user->getByUsername($data['username'])) {
                 $this->sendResponse("error", "Username is already registered", [], 409);
             }
             
@@ -95,7 +97,7 @@ class AuthController extends Controller
             $hashedPassword = password_hash($data['password'], PASSWORD_BCRYPT);
 
             // Create the new user
-            $newUser = $user->createUser([
+            $newUser = $user->create([
                 'email' => $data['email'],
                 'password' => $hashedPassword,
                 'username' => $data['username'],

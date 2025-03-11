@@ -4,7 +4,7 @@ use App\Core\Model;
 
 class User extends Model {
     // Get all users
-    public function getAllUsersBySchoolId($school_id): array
+    public function getAllBySchoolId($school_id): array
     {
         $stmt = $this->db->prepare("SELECT u.*, NULL as password, r.role_name 
             FROM users u 
@@ -14,7 +14,7 @@ class User extends Model {
     }
 
     // Get a user by ID
-    public function getUserById($id): bool|array
+    public function findById($id): bool|array
     {
         $stmt = $this->db->prepare("SELECT *, NULL as password FROM users WHERE user_id = :id");
         $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
@@ -25,11 +25,6 @@ class User extends Model {
 
     public static function find(string $id): ?static
     {
-        // Ensure PDO is set
-        if (!isset(static::$pdo)) {
-            throw new \RuntimeException("Database connection not initialized");
-        }
-
         $stmt = static::$pdo->prepare("SELECT * , NULL as password, r.role_name
             FROM users u 
             LEFT JOIN roles r ON u.role_id = r.role_id WHERE user_id = :user_id LIMIT 1");
@@ -48,7 +43,7 @@ class User extends Model {
     }
 
 
-    public function createUser(array $data): bool
+    public function create(array $data): bool
     {
         $stmt = $this->db->prepare("INSERT INTO users (email, password, username, first_name, last_name, address, phone_number, parent_phone_number, date_of_birth, role_id ) VALUES (:email, :password, :username, :first_name, :last_name, :address, :phone_number, :parent_phone_number, :date_of_birth, :role_id)");
         return $stmt->execute([
@@ -66,7 +61,7 @@ class User extends Model {
     }
 
     // Update user details (no validation here, just DB logic)
-    public function updateUser(string $id, array $data): bool
+    public function updateById(string $id, array $data): bool
     {
         if (empty($data)) {
             return false; // Nothing to update
@@ -112,7 +107,7 @@ class User extends Model {
     }
     
 
-    public function getUserByEmail($email)
+    public function getByEmail($email)
     {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE email = :email");
         $stmt->execute([
@@ -122,7 +117,7 @@ class User extends Model {
         return $user ?: false;
     }
 
-    public function getUserByUsername($username)
+    public function getByUsername($username)
     {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE username = :username");
         $stmt->execute([
@@ -132,25 +127,7 @@ class User extends Model {
         return $user ?: false;
     }
 
-    public function countUsersBySchoolId($school_id)
-    {
-        // Prepare the SQL query to count users by school_id
-        $sql = "SELECT COUNT(*) FROM users WHERE school_id = :school_id";
-
-        // Execute the query
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':school_id', $school_id, \PDO::PARAM_INT);
-        $stmt->execute();
-
-        // Fetch the result, which is a single row with a single value (the count)
-        $count = $stmt->fetchColumn();
-
-        // Return the count of users
-        return $count;
-    }
-
-
-    public function getUserByIdentifier(string $identifier)
+    public function getByIdentifier(string $identifier)
     {
         $sql = "SELECT u.*, r.role_name 
                 FROM users u 
@@ -161,7 +138,7 @@ class User extends Model {
         return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
     }
 
-    public function deleteUser($id): bool
+    public function deleteById($id): bool
     {
         $stmt = $this->db->prepare("DELETE FROM users WHERE user_id = :id");
         $stmt->bindParam(":id", $id, \PDO::PARAM_INT);

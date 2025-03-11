@@ -60,7 +60,7 @@ class Classes extends Model
         return $stmt->execute($params);
     }
 
-    public function delete($id)
+    public function deleteById($id)
     {
         $stmt = $this->db->prepare("DELETE FROM classes WHERE class_id = :id");
         $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
@@ -72,10 +72,6 @@ class Classes extends Model
 
     public static function find(string $id): ?static
     {
-        if (!isset(static::$pdo)) {
-            throw new \RuntimeException("Database connection not initialized");
-        }
-
         $stmt = static::$pdo->prepare("SELECT * FROM classes WHERE class_id = :class_id LIMIT 1");
         $stmt->execute([':class_id' => (int)$id]); // Cast to int for numeric IDs
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
