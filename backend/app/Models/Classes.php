@@ -19,16 +19,15 @@ class Classes extends Model
         return $stmt->fetchAll(\PDO::FETCH_ASSOC)??null;  
     }
 
-    public function create($classTeacherId, $schoolId, $className, $section)
+    public function create($classTeacherId, $schoolId, $className)
     {
-        $stmt = $this->db->prepare("INSERT INTO classes (class_teacher_id, school_id, class_name, section) 
-                                    VALUES (:class_teacher_id, :school_id, :class_name, :section)");
+        $stmt = $this->db->prepare("INSERT INTO classes (class_teacher_id, school_id, class_name) 
+                                    VALUES (:class_teacher_id, :school_id, :class_name)");
         
         $stmt->execute([
             ':class_teacher_id' => $classTeacherId,
             ':school_id' => $schoolId,
-            ':class_name' => $className,
-            ':section' => $section
+            ':class_name' => $className
         ]);
     
         return $this->db->lastInsertId() ?: null;
@@ -41,7 +40,7 @@ class Classes extends Model
         }
 
         // Define allowed fields to prevent updating sensitive columns (e.g., role, school_id)
-        $allowedFields = ['class_teacher_id', 'class_name', 'section']; // Adjust based on your schema
+        $allowedFields = ['class_teacher_id', 'class_name']; // Adjust based on your schema
         $updateFields = array_intersect_key($data, array_flip($allowedFields));
 
         if (empty($updateFields)) {

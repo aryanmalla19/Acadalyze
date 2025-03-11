@@ -40,7 +40,6 @@ class ClassesController extends Controller
             'class_teacher_id' => 'required',
             'school_id' => 'required',
             'class_name' => 'required|min:1|max:50',
-            'section' => 'min:1|max:50'
         ];
 
         $teacherSchoolId = User::find($data['class_teacher_id'])->school_id;
@@ -60,7 +59,7 @@ class ClassesController extends Controller
         if(!$this->classesModel->validate($data, $rules)){
             $this->sendResponse("error", "Invalid Entry", $this->classesModel->getErrors(), 400); 
         }
-        $newClass = $this->classesModel->create($data['class_teacher_id'], $data['school_id'], $data['class_name'], $data['section']);
+        $newClass = $this->classesModel->create($data['class_teacher_id'], $data['school_id'], $data['class_name']);
         if($newClass){
             $this->sendResponse("success", "New Class Created with ID $newClass", null); 
         }

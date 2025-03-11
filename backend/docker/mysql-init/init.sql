@@ -42,8 +42,10 @@ CREATE TABLE classes (
 CREATE TABLE subjects (
     subject_id INT AUTO_INCREMENT PRIMARY KEY,
     class_id INT NOT NULL,
+    teacher_id INT NOT NULL,
     subject_name VARCHAR(50) NOT NULL,
-    FOREIGN KEY (class_id) REFERENCES classes(class_id) ON DELETE CASCADE
+    FOREIGN KEY (class_id) REFERENCES classes(class_id) ON DELETE CASCADE,
+    FOREIGN KEY (teacher_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE exams (
@@ -57,8 +59,8 @@ CREATE TABLE subjects_exams (
     subject_id INT NOT NULL,
     exam_id INT NOT NULL,
     subject_exam_time TIMESTAMP,
-    pass_marks INT NOT NULL
-    full_marks INT NOT NULL
+    pass_marks INT NOT NULL,
+    full_marks INT NOT NULL,
     FOREIGN KEY (subject_id) REFERENCES subjects(subject_id) ON DELETE CASCADE,
     FOREIGN KEY (exam_id) REFERENCES exams(exam_id) ON DELETE CASCADE
 );
@@ -67,7 +69,7 @@ CREATE TABLE marks (
     marks_id INT AUTO_INCREMENT PRIMARY KEY,
     student_id INT NOT NULL,
     subjects_exams_id INT NOT NULL,
-    marks_obtained INT NOT NULL
+    marks_obtained INT NOT NULL,
     FOREIGN KEY (student_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (subjects_exams_id) REFERENCES subjects_exams(subjects_exams_id) ON DELETE CASCADE
 );
