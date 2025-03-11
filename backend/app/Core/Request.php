@@ -61,6 +61,11 @@ class Request
         return stripos($this->getContentType() ?? '', 'application/json') !== false;
     }
 
+    public function getCookie(string $name, string $default = ''): string
+    {
+        return $_COOKIE[$name] ?? $default;
+    }
+
     public function getUser()
     {
         $userId = $this->user['user_id'];

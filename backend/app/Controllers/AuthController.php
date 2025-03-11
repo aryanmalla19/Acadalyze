@@ -24,17 +24,21 @@ class AuthController extends Controller
         $user = new User();
         $userData = $user->getByIdentifier($data['identifier']);
 
-        if(!$userData){
-            $this->sendResponse("error", "Email or username does not exists", null, 404);
+        if (!$userData) {
+            $this->sendResponse("error", "Email or username does not exist", null, 404);
         }
         
-        if (!$userData || !password_verify($data['password'], $userData['password'])) {
+        if (!password_verify($data['password'], $userData['password'])) {
             $this->sendResponse("error", "Invalid credentials", [], 401);
         }
 
         try {
             $token = Auth::generateToken($userData['role_name'], $userData['user_id'], $data['identifier']);
-            $this->sendResponse("success", "Login successful", ["token" => $token]);
+            
+            // Set the token as a cookie with the httpOnly flag to prevent JS access
+            setcookie('token', $token, time() + JWT_EXPIRATION, '/', '', false, true);
+            
+            $this->sendResponse("success", "Login successful");
         } catch (Exception $e) {
             $this->sendResponse("error", "Internal Server Error", [], 500);
         }
@@ -114,5 +118,12 @@ class AuthController extends Controller
             $this->sendResponse("error", "Internal Server Error", [], 500);
         }
     }
+
+    public function logout(Request $request): void
+    {
+        setcookie('token', '', time() - 3600, '/', '', false, true);
+        $this->sendResponse("success", "Logged out successfully");
+    }
+
 
 }
