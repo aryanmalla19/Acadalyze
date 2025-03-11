@@ -2,11 +2,13 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8080/api";
 
-export const register = async (username, password) => {
+// Register API call
+export const register = async (formData) => {
   try {
-    const response = await axios.post(`${API_URL}/register`, {
-      username,
-      password,
+    const response = await axios.post(`${API_URL}/register`, formData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
     return response.data;
   } catch (error) {
@@ -14,10 +16,11 @@ export const register = async (username, password) => {
   }
 };
 
-export const login = async (usernameOrEmail, password) => {
+// Login API call
+export const login = async (identifier, password) => {
   try {
     const response = await axios.post(`${API_URL}/login`, {
-      usernameOrEmail,
+      identifier,
       password,
     });
     return response.data;
