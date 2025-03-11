@@ -74,7 +74,7 @@ class AuthController extends Controller
         // Validate the data
         $user = new User();
         if (!$user->validate($data, $rules)) {
-            $this->sendResponse("error", implode(", ", $user->getErrors()), [], 400);
+            $this->sendResponse("error", $user->getErrors(), [], 400);
         }
 
         // Hash the password before passing it to the model
