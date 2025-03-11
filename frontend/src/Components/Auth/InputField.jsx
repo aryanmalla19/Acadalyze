@@ -1,6 +1,14 @@
 import React from "react";
 
-const InputField = ({ icon: Icon, type, placeholder }) => {
+const InputField = ({
+  icon: Icon,
+  type,
+  placeholder,
+  name,
+  value,
+  onChange,
+  autocomplete,
+}) => {
   return (
     <div className="mb-4">
       <div className="flex items-center bg-gray-100 rounded-md p-2">
@@ -8,6 +16,10 @@ const InputField = ({ icon: Icon, type, placeholder }) => {
           type={type}
           placeholder={placeholder}
           required
+          name={name}
+          value={value}
+          onChange={onChange}
+          autoComplete={autocomplete}
           className="w-full bg-transparent focus:outline-none"
         />
         {Icon && <Icon className="text-gray-500 mr-2" />}
