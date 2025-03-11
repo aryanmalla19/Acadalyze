@@ -23,6 +23,7 @@ use App\Controllers\AuthController;
 use App\Controllers\SchoolController;
 use App\Controllers\RoleController;
 use App\Controllers\ClassesController;
+use App\Controllers\SubjectController;
 
 
 $router = new Router();
@@ -32,6 +33,7 @@ $authController = new AuthController();
 $schoolController = new SchoolController();
 $roleController = new RoleController();
 $classesController = new ClassesController();
+$subjectController = new SubjectController();
 
 // AUTH
 $router->addRoute("POST", "/api/login", [$authController, "login"]);
@@ -125,4 +127,33 @@ $router->addRoute("DELETE", '/api/classes/{id}', [$classesController, 'destroy']
     [\App\Middleware\RoleMiddleware::class, [['Admin']]],
     [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\ClassesPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Classes::class]]]
 ]);
+
+// SUBJECTS
+$router->addRoute("GET", '/api/subjects', [$subjectController, 'index'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+]);
+
+$router->addRoute("GET", '/api/subjects/{id}', [$subjectController, 'show'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\ClassesPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Classes::class]]]
+]);
+
+$router->addRoute("POST", '/api/subjects', [$subjectController, 'create'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin']]]
+]);
+
+$router->addRoute("PUT", '/api/subjects/{id}', [$subjectController, 'update'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin']]],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\ClassesPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Classes::class]]]
+]);
+
+$router->addRoute("DELETE", '/api/subjects/{id}', [$subjectController, 'destroy'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin']]],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\ClassesPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Classes::class]]]
+]);
+
 $router->route();
