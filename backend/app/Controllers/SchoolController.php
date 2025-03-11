@@ -18,14 +18,13 @@ class SchoolController extends Controller
         $school = $this->schoolModel->findById($id);
         if($school){
             $this->sendResponse("success", "School data fetched successfully", $school);
-            return;
         }
         $this->sendResponse("error", "School with ID $id does not exists", null, 404);
     }
     
     public function index(Request $request): void
     {
-        $school_id = $request->user['school_id'];
+        $school_id = $request->getUser()->school_id;
         if(!$school_id){
         $this->sendResponse("error", "You are not associated with any school", null, 404);
         }
