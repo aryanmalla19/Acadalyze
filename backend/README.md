@@ -18,7 +18,7 @@ Authorization: Bearer <token>
 ### 1. User Login
 #### Endpoint
 ```
-POST /api/login
+POST /api/auth/login
 ```
 #### Description
 Authenticates a user and returns a JWT token.
@@ -51,7 +51,7 @@ Authenticates a user and returns a JWT token.
 ### 2. User Registration
 #### Endpoint
 ```
-POST /api/register
+POST /api/auth/register
 ```
 #### Description
 Registers a new user.
@@ -90,9 +90,97 @@ Registers a new user.
     "error": "Username is already registered"
 }
 ```
+### **3. User Verification**
+
+#### **Endpoint**
+```
+GET /api/auth/verify
+```
+
+#### **Description**
+Verifies the authenticated user using the session cookies and returns a decoded JWT token.
+
+#### **Authentication**
+- **Required:** Yes (Cookies)
+- **Method:** Cookie-based authentication (JWT stored in cookies)
+- **Headers:** No additional headers required
+
+#### **Request Body**
+> 🚫 **Not required** – The request does not accept a body.
+
+#### **Response (Success)**
+```json
+{
+    "status": "success",
+    "message": "Successfully verified! Authentication completed",
+    "data": {
+        "iat": 1,
+        "exp": 1,
+        "user_id": 1,
+        "role": "Role",
+        "identifier": "user@example.com"
+    }
+}
+```
+
+#### **Response (Error)**
+**Invalid or Expired Token:**
+```json
+{
+    "status": "error",
+    "error": "Invalid or expired authentication token"
+}
+```
+
+**Unauthorized (No Token Provided):**
+```json
+{
+    "status": "error",
+    "error": "Authentication required"
+}
+```
+
+#### **Notes**
+- This endpoint **only uses cookies** for authentication and does not accept a request body.
+- The server expects the JWT token to be stored in the request's cookies.
+- If the token is missing, expired, or invalid, an error response is returned.
 
 
-### 3. Get All Users by School ID
+
+### 4. User Logout
+#### Endpoint
+```
+POST /api/auth/logout
+```
+#### Description
+Logs out a user by removing jwt tojen from coojies.
+
+#### Request Body (JSON)
+```json
+{
+    "identifier": "user@example.com",
+    "password": "yourpassword"
+}
+```
+#### Response (Success)
+```json
+{
+    "status": "success",
+    "message": "Logged out successfully"
+}
+```
+#### Response (Error)
+```json
+{
+    "status": "error",
+    "error": "Invalid credentials"
+}
+```
+
+---
+
+
+### 5. Get All Users by School ID
 **Endpoint:**
 ```
 GET /api/users
@@ -123,7 +211,7 @@ Authorization: Bearer <token>
 
 ---
 
-### 4. Get User by ID
+### 6. Get User by ID
 **Endpoint:**
 ```
 GET /api/users/{id}
@@ -150,7 +238,7 @@ GET /api/users/{id}
 
 ---
 
-### 5. Update User
+### 7. Update User
 **Endpoint:**
 ```
 PUT /api/users/{id}
@@ -203,7 +291,7 @@ Content-Type: application/json
 
 ---
 
-### 6. Delete User
+### 8. Delete User
 **Endpoint:**
 ```
 DELETE /users/{id}
@@ -240,5 +328,4 @@ DELETE /users/{id}
 
 
 ### Author: Aryan Malla
-### Last Updated: March 2025
-
+### Last Updated: 12 March 2025

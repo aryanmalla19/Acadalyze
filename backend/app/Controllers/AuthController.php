@@ -125,5 +125,16 @@ class AuthController extends Controller
         $this->sendResponse("success", "Logged out successfully");
     }
 
+    public function verify(Request $request)
+    {
+        $token = $request->getCookie('token', ''); 
 
+        if ($token) {
+            $userData = Auth::validateToken($token);
+            if ($userData) {
+                $this->sendResponse("success", "Successfully verified! Authentication completed", $userData);
+            }
+        }
+        $this->sendResponse("error", "Unauthorized! Token is expired or invalid. Please log in again.", null, 401);
+    }
 }

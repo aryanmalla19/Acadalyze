@@ -36,6 +36,8 @@ $subjectController = new SubjectController();
 // AUTH
 $router->addRoute("POST", "/api/auth/login", [$authController, "login"]);
 $router->addRoute("POST", "/api/auth/register", [$authController, "register"]);
+$router->addRoute("GET", "/api/auth/verify", [$authController, "verify"]);
+$router->addRoute("POST", "/api/auth/logout", [$authController, "logout"]);
 
 //USERS
 $router->addRoute("GET", "/api/users", [$userController, "index"], [
