@@ -125,7 +125,7 @@ class SchoolController extends Controller
         }
 
         try {
-            if($this->schoolModel->update($id, $data)){
+            if($this->schoolModel->updateById($id, $data)){
                 $this->sendResponse("success", "School updated successfully", $data);
             }
             $this->sendResponse("error", "No data provided to update school", $data, 400);

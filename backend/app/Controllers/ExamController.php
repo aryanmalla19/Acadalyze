@@ -25,7 +25,7 @@ class ExamController extends Controller
     public function show(Request $request, $id): void
     {
         $exam = $this->examModel->findById($id);
-        if(empty($exam)){
+        if(!empty($exam)){
             $this->sendResponse("success", "Exam data fetched successfully", $exam);
         }
         $this->sendResponse("error", "Exam data not found", null, 404);

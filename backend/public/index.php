@@ -26,6 +26,8 @@ header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 // Allow specific headers (Content-Type, Authorization, etc.)
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+header('Content-Type: application/json; charset=UTF-8');
+
 
 // Handle pre-flight request (OPTIONS)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -43,6 +45,8 @@ use App\Controllers\AuthController;
 use App\Controllers\SchoolController;
 use App\Controllers\ClassesController;
 use App\Controllers\SubjectController;
+use App\Controllers\ExamController;
+use App\Controllers\SubjectsExamsController;
 
 
 $router = new Router();
@@ -52,6 +56,8 @@ $authController = new AuthController();
 $schoolController = new SchoolController();
 $classesController = new ClassesController();
 $subjectController = new SubjectController();
+$examController = new ExamController();
+$subjectsExamsController = new SubjectsExamsController();
 
 // AUTH
 $router->addRoute("POST", "/api/auth/login", [$authController, "login"]);
@@ -164,6 +170,64 @@ $router->addRoute("DELETE", '/api/subjects/{id}', [$subjectController, 'destroy'
     [\App\Middleware\AuthMiddleware::class],
     [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
     [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\SubjectPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Subject::class]]]
+]);
+
+
+// EXAMS
+$router->addRoute("GET", '/api/exams', [$examController, 'index'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+]);
+
+$router->addRoute("GET", '/api/exams/{id}', [$examController, 'show'], [
+    [\App\Middleware\AuthMiddleware::class], 
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\ExamPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Exam::class]]]
+]);
+
+$router->addRoute("POST", '/api/exams', [$examController, 'create'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+]);
+
+$router->addRoute("PUT", '/api/exams/{id}', [$examController, 'update'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\ExamPolicy::class, 'action' => 'update', 'modelClass' => \App\Models\Exam::class]]]
+]);
+
+$router->addRoute("DELETE", '/api/exams/{id}', [$examController, 'destroy'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\ExamPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Exam::class]]]
+]);
+
+
+// SUVJECTS_EXAMS
+$router->addRoute("GET", '/api/subject-exams', [$subjectsExamsController, 'index'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+]);
+
+$router->addRoute("GET", '/api/subject-exams/{id}', [$subjectsExamsController, 'show'], [
+    [\App\Middleware\AuthMiddleware::class], 
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\SubjectsExamsPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\SubjectsExams::class]]]
+]);
+
+$router->addRoute("POST", '/api/subject-exams', [$subjectsExamsController, 'create'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+]);
+
+$router->addRoute("PUT", '/api/subject-exams/{id}', [$subjectsExamsController, 'update'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\SubjectsExamsPolicy::class, 'action' => 'update', 'modelClass' => \App\Models\SubjectsExams::class]]]
+]);
+
+$router->addRoute("DELETE", '/api/subject-exams/{id}', [$subjectsExamsController, 'destroy'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\SubjectsExamsPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\SubjectsExams::class]]]
 ]);
 
 $router->route();
