@@ -5,6 +5,7 @@ import {
   FaLock,
   FaPhone,
   FaAddressBook,
+  FaCriticalRole,
 } from "react-icons/fa";
 import { MdDriveFileRenameOutline } from "react-icons/md";
 
@@ -63,6 +64,22 @@ export const leftFields = [
     placeholder: "Last Name",
     validation: {
       required: "Last name is required",
+      minLength: {
+        value: 2,
+        message: "Last name must be at least 2 characters",
+      },
+      maxLength: {
+        value: 30,
+        message: "Last name must be no more than 30 characters",
+      },
+    },
+  },
+  {
+    name: "date_of_birth",
+    type: "date",
+    placeholder: "Date of Birth",
+    validation: {
+      required: "Date of birth is required",
       minLength: {
         value: 2,
         message: "Last name must be at least 2 characters",
@@ -141,6 +158,23 @@ export const rightFields = [
       maxLength: {
         value: 10,
         message: "Phone number must be no more than 10 characters",
+      },
+    },
+  },
+  {
+    icon: FaCriticalRole,
+    name: "role",
+    type: "text",
+    placeholder: "Role",
+    validation: {
+      required: "Role is required",
+      minLength: {
+        value: 3,
+        message: "Role must be at least 3 characters",
+      },
+      maxLength: {
+        value: 15,
+        message: "Role must be no more than 15 characters",
       },
     },
   },
