@@ -12,6 +12,7 @@ export const register = async (formData) => {
     });
     return response.data;
   } catch (error) {
+    console.log("Validation Errors:", error.response.data.errors);
     throw new Error(error.response?.data?.message || "Registration failed");
   }
 };
@@ -19,12 +20,19 @@ export const register = async (formData) => {
 // Login API call
 export const login = async (identifier, password) => {
   try {
-    const response = await axios.post(`${API_URL}/login`, {
-      identifier,
-      password,
-    });
+    const response = await axios.post(
+      `${API_URL}/login`,
+      {
+        identifier,
+        password,
+      },
+      {
+        withCredentials: true, // Enable sending cookies with the request
+      }
+    );
     return response.data;
   } catch (error) {
+    console.log("Validation Errors:", error.response.data.errors);
     throw new Error(error.response?.data?.message || "Login failed");
   }
 };
