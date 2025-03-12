@@ -1,6 +1,6 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import Page1 from "./Pages/Page1";
 import Page2 from "./Pages/Page2";
@@ -11,22 +11,24 @@ import Sidebar from "./Components/Sidebar/Sidebar";
 import Home from "./Pages/Home";
 import Auth from "./Pages/Auth";
 import MainLayout from "./Layout/MainLayout";
-import { AuthContext } from "./Context/AuthContext";
-import { checkAuth } from "./Api/Api";
+import useVerifyAuth from "./CustoomHook/useVerifyAuth";
+import PageLoader from "./Components/Common/PageLoader";
 
 const App = () => {
-  const { authUser, setAuthUser } = useContext(AuthContext);
+  const { authUser, isCheckingAuth } = useVerifyAuth();
 
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+  if (isCheckingAuth) return <PageLoader />;
 
   return (
     <div>
       <Routes>
-        <Route path="/" element={<Auth />} />
-        <Route element={<MainLayout />}>
-          <Route path="/home" element={<Home />} />
+        <Route path="/" element={<Navigate to="/auth" />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route element={authUser ? <MainLayout /> : <Navigate to="/auth" />}>
+          <Route
+            path="/home"
+            element={authUser ? <Home /> : <Navigate to="/auth" />}
+          />
         </Route>
       </Routes>
     </div>

@@ -22,7 +22,7 @@ export const checkAuth = async () => {
     console.log(response.data, "api.js");
     return response.data;
   } catch (error) {
-    console.error("Check Authentication Errors:", error.response.data.errors);
+    console.log("Check Authentication Errors:", error.response.data.errors);
     throw new Error(error.response?.data?.message || "Authentication failed");
   }
 };
