@@ -19,20 +19,36 @@ const App = () => {
 
   if (isCheckingAuth) return <PageLoader />;
 
+  console.log(authUser);
+
   return (
     <div>
       <Routes>
         <Route path="/" element={<Navigate to="/auth" />} />
-        <Route path="/auth" element={<Auth />} />
-        <Route element={authUser ? <MainLayout /> : <Navigate to="/auth" />}>
-          <Route
-            path="/home"
-            element={authUser ? <Home /> : <Navigate to="/auth" />}
-          />
-        </Route>
+        <Route
+          path="/auth"
+          element={authUser ? <Navigate to="/home" /> : <Auth />}
+        />
+
+        {authUser == "Admin" ? (
+          <Route element={<MainLayout />}>
+            <Route path="/home" element={<Home />} />
+          </Route>
+        ) : (
+          <Route path="*" element={<Navigate to="/auth" />} />
+        )}
       </Routes>
     </div>
   );
 };
 
 export default App;
+
+{
+  /* <Route element={authUser ? <MainLayout /> : <Navigate to="/auth" />}>
+          <Route
+            path="/home"
+            element={authUser ? <Home /> : <Navigate to="/auth" />}
+          />
+        </Route> */
+}
