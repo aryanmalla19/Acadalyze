@@ -25,7 +25,7 @@ class ExamController extends Controller
     public function show(Request $request, $id): void
     {
         $exam = $this->examModel->findById($id);
-        if(empty($exam)){
+        if(!empty($exam)){
             $this->sendResponse("success", "Exam data fetched successfully", $exam);
         }
         $this->sendResponse("error", "Exam data not found", null, 404);
@@ -80,7 +80,7 @@ class ExamController extends Controller
         }
 
         try {
-            if(!$this->examModel->update($id, $data)){
+            if(!$this->examModel->updateById($id, $data)){
                 $this->sendResponse("error", "No data provided to update", null, 404);
             }
             $this->sendResponse("success", "Exam with ID $id updated successfully", $data);
