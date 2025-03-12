@@ -47,6 +47,7 @@ use App\Controllers\ClassesController;
 use App\Controllers\SubjectController;
 use App\Controllers\ExamController;
 use App\Controllers\SubjectsExamsController;
+use App\Controllers\MarksController;
 
 
 $router = new Router();
@@ -58,7 +59,7 @@ $classesController = new ClassesController();
 $subjectController = new SubjectController();
 $examController = new ExamController();
 $subjectsExamsController = new SubjectsExamsController();
-
+$marksController = new MarksController();
 // AUTH
 $router->addRoute("POST", "/api/auth/login", [$authController, "login"]);
 $router->addRoute("POST", "/api/auth/register", [$authController, "register"]);
@@ -228,6 +229,35 @@ $router->addRoute("DELETE", '/api/subject-exams/{id}', [$subjectsExamsController
     [\App\Middleware\AuthMiddleware::class],
     [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
     [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\SubjectsExamsPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\SubjectsExams::class]]]
+]);
+
+
+// MARkS
+$router->addRoute("GET", '/api/marks', [$marksController, 'index'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]]
+]);
+
+$router->addRoute("GET", '/api/marks/{id}', [$marksController, 'show'], [
+    [\App\Middleware\AuthMiddleware::class], 
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\MarksPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Marks::class]]]
+]);
+
+$router->addRoute("POST", '/api/marks', [$marksController, 'create'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+]);
+
+$router->addRoute("PUT", '/api/marks/{id}', [$marksController, 'update'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\MarksPolicy::class, 'action' => 'update', 'modelClass' => \App\Models\Marks::class]]]
+]);
+
+$router->addRoute("DELETE", '/api/marks/{id}', [$marksController, 'destroy'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\MarksPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Marks::class]]]
 ]);
 
 $router->route();
