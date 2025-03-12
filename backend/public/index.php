@@ -2,14 +2,34 @@
 // Load Composer autoloader
 require_once __DIR__.'/../vendor/autoload.php';
 
-// CORS
-header("Access-Control-Allow-Origin: *");
+// List of allowed origins for development (you can add more ports as needed)
+$allowed_origins = [
+    'http://localhost:5174',
+    'http://localhost:3000',
+    'http://localhost:5175',
+    'http://localhost:5173',
+    'http://localhost:5176',
+];
+// Get the origin of the incoming request
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+// Check if the origin is in the allowed list
+if (in_array($origin, $allowed_origins)) {
+    // Allow the request from the allowed origin
+    header("Access-Control-Allow-Origin: $origin");
+} else {
+    // Optionally, you can block requests from non-allowed origins
+    header("Access-Control-Allow-Origin: 'none'"); // Or handle error
+}
+// Allow credentials (cookies, HTTP authentication)
+header("Access-Control-Allow-Credentials: true");
+// Allow specific HTTP methods
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
-header("Content-Type: application/json; charset=UTF-8");
+// Allow specific headers (Content-Type, Authorization, etc.)
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 
-// Handle preflight request
+// Handle pre-flight request (OPTIONS)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    // Respond with 200 status code for OPTIONS requests
     http_response_code(200);
     exit();
 }
