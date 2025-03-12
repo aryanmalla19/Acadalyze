@@ -19,10 +19,20 @@ export const register = async (data) => {
 export const checkAuth = async () => {
   try {
     const response = axiosInstance.get("/verify");
-    console.log(response.data, "api.js");
     return response.data;
   } catch (error) {
     console.log("Check Authentication Errors:", error.response.data.errors);
     throw new Error(error.response?.data?.message || "Authentication failed");
+  }
+};
+
+export const login = async (data) => {
+  try {
+    const response = await axiosInstance.post("/login", data);
+    console.log(response.data, "api.js login");
+    return response.data;
+  } catch (error) {
+    console.error("Validation Errors:", error.response.data.errors);
+    throw new Error(error.response?.data?.message || "Login failed");
   }
 };
