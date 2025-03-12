@@ -67,7 +67,8 @@ Registers a new user.
     "address": "123 Street",
     "phone_number": "1234567890",
     "parent_phone_number": "0987654321",
-    "date_of_birth": "2000-01-01"
+    "date_of_birth": "2000-01-01",
+    "role": "Admin"
 }
 ```
 #### Response (Success)

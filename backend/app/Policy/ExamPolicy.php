@@ -2,15 +2,16 @@
 namespace App\Policy;
 
 use App\Core\Policy;
+use App\Models\Classes;
 
-class SchoolPolicy implements Policy
+class ExamPolicy implements Policy
 {
-    public function view($user, $model): bool
+    public function view($user, $model): bool 
     {
         return $user->school_id === $model->school_id;
     }
     
-    public function update($user, $model): bool
+    public function update($user, $model): bool 
     {
         return $user->school_id === $model->school_id;
     }

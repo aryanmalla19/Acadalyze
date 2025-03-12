@@ -50,8 +50,10 @@ CREATE TABLE subjects (
 
 CREATE TABLE exams (
     exam_id INT AUTO_INCREMENT PRIMARY KEY,
+    school_id INT NOT NULL,
     exam_name VARCHAR(50) NOT NULL,
-    exam_date DATE NOT NULL
+    exam_date DATE NOT NULL,
+    FOREIGN KEY (school_id) REFERENCES schools(school_id) ON DELETE CASCADE
 );
 
 CREATE TABLE subjects_exams (
