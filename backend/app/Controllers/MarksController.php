@@ -19,7 +19,7 @@ class MarksController extends Controller
 
     public function show(Request $request, $id)
     {
-        $marks = $this->marksModel($id);
+        $marks = $this->marksModel->findById($id);
         if(empty($marks)){
             $this->sendResponse("error", "Marks data not found.", [], 404);
         }

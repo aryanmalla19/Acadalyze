@@ -48,6 +48,7 @@ use App\Controllers\SubjectController;
 use App\Controllers\ExamController;
 use App\Controllers\SubjectsExamsController;
 use App\Controllers\MarksController;
+use App\Controllers\AttendanceController;
 
 
 $router = new Router();
@@ -60,6 +61,9 @@ $subjectController = new SubjectController();
 $examController = new ExamController();
 $subjectsExamsController = new SubjectsExamsController();
 $marksController = new MarksController();
+$attendanceController = new AttendanceController();
+
+
 // AUTH
 $router->addRoute("POST", "/api/auth/login", [$authController, "login"]);
 $router->addRoute("POST", "/api/auth/register", [$authController, "register"]);
@@ -258,6 +262,35 @@ $router->addRoute("DELETE", '/api/marks/{id}', [$marksController, 'destroy'], [
     [\App\Middleware\AuthMiddleware::class],
     [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
     [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\MarksPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Marks::class]]]
+]);
+
+
+// ATTENDANCE
+$router->addRoute("GET", '/api/attendance', [$attendanceController, 'index'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]]
+]);
+
+$router->addRoute("GET", '/api/attendance/{id}', [$attendanceController, 'show'], [
+    [\App\Middleware\AuthMiddleware::class], 
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\AttendancePolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Attendance::class]]]
+]);
+
+$router->addRoute("POST", '/api/attendance', [$attendanceController, 'create'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+]);
+
+$router->addRoute("PUT", '/api/attendance/{id}', [$attendanceController, 'update'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\AttendancePolicy::class, 'action' => 'update', 'modelClass' => \App\Models\Attendance::class]]]
+]);
+
+$router->addRoute("DELETE", '/api/attendance/{id}', [$attendanceController, 'destroy'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\AttendancePolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Attendance::class]]]
 ]);
 
 $router->route();
