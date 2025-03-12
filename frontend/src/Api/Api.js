@@ -18,7 +18,8 @@ export const register = async (data) => {
 
 export const checkAuth = async () => {
   try {
-    const response = axiosInstance.get("/verify");
+    const response = await axiosInstance.get("/verify");
+    console.log(response);
     return response.data;
   } catch (error) {
     console.log("Check Authentication Errors:", error.response.data.errors);

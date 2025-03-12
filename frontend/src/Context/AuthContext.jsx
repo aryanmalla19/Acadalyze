@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export const AuthContext = createContext({
   authUser: null,
@@ -7,6 +7,10 @@ export const AuthContext = createContext({
 
 export const AuthProvider = ({ children }) => {
   const [authUser, setAuthUser] = useState(null);
+
+  useEffect(() => {
+    console.log(authUser, "context.jsx");
+  }, [authUser]);
 
   const values = {
     authUser,

@@ -10,7 +10,8 @@ const useVerifyAuth = () => {
     const fetchAuthStatus = async () => {
       try {
         const user = await checkAuth();
-        setAuthUser(user);
+
+        setAuthUser(user.data.role);
       } catch (error) {
         console.log("Authentication failed", error);
         setAuthUser(null);
