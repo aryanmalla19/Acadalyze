@@ -1,10 +1,9 @@
 import { useForm } from "react-hook-form";
-
 import InputField from "../Auth/InputField";
 import { leftFields, rightFields } from "../Fields/Fields";
-
-import { FaCalendar } from "react-icons/fa";
 import { AuthButton } from "../Common/buttons";
+import { register as registerUser } from "../../Api/Api";
+import { useNavigate } from "react-router-dom";
 
 const Register = ({ isLoggedIn }) => {
   const {
@@ -13,10 +12,19 @@ const Register = ({ isLoggedIn }) => {
     formState: { errors, isSubmitting },
     reset,
   } = useForm();
+  const navigate = useNavigate();
 
-  const onSubmit = (data) => {
-    console.log(data);
-    reset();
+  const onSubmit = async (data) => {
+    try {
+      const response = await registerUser(data);
+      console.log("registration successful:", response);
+      reset();
+      alert("Registration Successful");
+      navigate("/home");
+    } catch (error) {
+      console.log("Failed:", error.message);
+      alert(error.message);
+    }
   };
 
   return (
@@ -56,22 +64,6 @@ const Register = ({ isLoggedIn }) => {
             errors={errors[field.name]}
           />
         ))}
-      </div>
-
-      {/* Full Width Field */}
-      <div className="col-span-1 md:col-span-2">
-        <InputField
-          icon={FaCalendar}
-          type="date"
-          placeholder="Date of Birth"
-          name="date_of_birth"
-          autocomplete="date_of_birth"
-          validation={{
-            required: "Date of birth is required",
-          }}
-          register={register}
-          errors={errors.date_of_birth}
-        />
       </div>
 
       {/* Submit Button */}
