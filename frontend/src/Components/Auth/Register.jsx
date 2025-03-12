@@ -1,9 +1,6 @@
 import { useForm } from "react-hook-form";
-
 import InputField from "../Auth/InputField";
 import { leftFields, rightFields } from "../Fields/Fields";
-
-import { FaCalendar } from "react-icons/fa";
 import { AuthButton } from "../Common/buttons";
 
 const Register = ({ isLoggedIn }) => {
@@ -61,7 +58,6 @@ const Register = ({ isLoggedIn }) => {
       {/* Full Width Field */}
       <div className="col-span-1 md:col-span-2">
         <InputField
-          icon={FaCalendar}
           type="date"
           placeholder="Date of Birth"
           name="date_of_birth"

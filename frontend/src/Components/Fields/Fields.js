@@ -1,5 +1,12 @@
 // fields/fields.js
-import { FaEnvelope, FaUser, FaLock, FaPhone } from "react-icons/fa";
+import {
+  FaEnvelope,
+  FaUser,
+  FaLock,
+  FaPhone,
+  FaAddressBook,
+} from "react-icons/fa";
+import { MdDriveFileRenameOutline } from "react-icons/md";
 
 export const leftFields = [
   {
@@ -33,7 +40,7 @@ export const leftFields = [
     },
   },
   {
-    icon: FaUser,
+    icon: MdDriveFileRenameOutline,
     name: "first_name",
     type: "text",
     placeholder: "First Name",
@@ -50,7 +57,7 @@ export const leftFields = [
     },
   },
   {
-    icon: FaUser,
+    icon: MdDriveFileRenameOutline,
     name: "last_name",
     type: "text",
     placeholder: "Last Name",
@@ -87,6 +94,7 @@ export const rightFields = [
     },
   },
   {
+    icon: FaAddressBook,
     name: "address",
     type: "text",
     placeholder: "Address",
