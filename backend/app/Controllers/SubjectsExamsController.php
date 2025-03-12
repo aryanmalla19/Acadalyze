@@ -16,22 +16,22 @@ class SubjectsExamsController extends Controller
     {
         $schooolId = $request->getUser()->school_id;
         $subjectsExams = $this->subjectsExamsModel->getAllBySchoolId($schooolId);
-        if(empty($exams)){
+        if(empty($subjectsExams)){
             $this->sendResponse("error", "Exam data not found", null, 404);
         }
-        $this->sendResponse("success", "All Exams fetched sucessfully", $exams);
+        $this->sendResponse("success", "All Exams fetched sucessfully", $subjectsExams);
     }
 
     public function show(Request $request, $id)
     {
         $subjectsExam = $this->subjectsExamsModel->findById($id);
         if(!empty($subjectsExam)){
-            $this->sendResponse("success", "Subject_Exam data fetched successfully", $exam);
+            $this->sendResponse("success", "Subject_Exam data fetched successfully", $subjectsExam);
         }
         $this->sendResponse("error", "Subject_Exam data with ID $id not found", [], 404);
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
         $data = $request->body;
 
@@ -46,7 +46,6 @@ class SubjectsExamsController extends Controller
         $rules = array_intersect_key($allRules, $data);
 
         $errors = $this->subjectsExamsModel->validate($data, $rules);
-
         if(!empty($errors)){
             $this->sendResponse("error", "Invalid entry !", $this->subjectsExamsModel->getErrors(), 400);
         }
@@ -85,14 +84,13 @@ class SubjectsExamsController extends Controller
             'full_marks' => '',
         ];
 
-
         // Define validation rules
         $rules = [
             'subject_id' => 'required',
-            'exam_id' => 'required|min:3|max:50',
+            'exam_id' => 'required',
             'subject_exam_time' => 'required',
-            'pass_marks' => 'required|min:10|max:100',
-            'full_marks' => 'required|min:10|max:100',
+            'pass_marks' => 'required',
+            'full_marks' => 'required',
         ];
 
         if (!$this->subjectsExamsModel->validate($data, $rules)) {

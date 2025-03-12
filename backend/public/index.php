@@ -202,7 +202,7 @@ $router->addRoute("DELETE", '/api/exams/{id}', [$examController, 'destroy'], [
 ]);
 
 
-// SUVJECTS_EXAMS
+// SUBJECTS_EXAMS
 $router->addRoute("GET", '/api/subject-exams', [$subjectsExamsController, 'index'], [
     [\App\Middleware\AuthMiddleware::class],
     [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],

@@ -39,10 +39,9 @@ class SubjectsExams extends Model
         if (empty($updateFields)) {
             return false;
         }
-
         $setClause = implode(', ', array_map(fn($key) => "$key = :$key", array_keys($updateFields)));
         $query = "UPDATE subjects_exams SET $setClause WHERE subjects_exams_id = :id";
-
+        
         $stmt = $this->db->prepare($query);
         $params = array_merge([':id' => $id], array_combine(
             array_map(fn($key) => ":$key", array_keys($updateFields)),
