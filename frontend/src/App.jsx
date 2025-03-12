@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 
 import { Route, Routes } from "react-router-dom";
 
@@ -11,6 +11,7 @@ import Page4 from "./Pages/Page4";
 import Sidebar from "./Components/Sidebar/Sidebar";
 import Auth from "./Pages/Auth";
 import MainLayout from "./Layout/MainLayout";
+import { AuthContext } from "./Context/AuthContext";
 
 const App = () => {
   return (
