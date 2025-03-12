@@ -16,13 +16,13 @@ class UserController extends Controller
 
     public function index(Request $request): void
     {
-        $school_id = $request->user['school_id'];
+        $school_id = $request->getUser()->school_id;
 
         if(!$school_id){
             $this->sendResponse("error", "You are not asssociated with any school", $users);
         }
         
-        $users = $this->userModel->getAllUsersBySchoolId($school_id);
+        $users = $this->userModel->getAllBySchoolId($school_id);
         
         if(!empty($users)){
             $this->sendResponse("success", "All Users data fetched successfully", $users);
@@ -33,7 +33,7 @@ class UserController extends Controller
 
     public function show(Request $request, string $id): void 
     {
-        $user = $this->userModel->getUserById($id);
+        $user = $this->userModel->findById($id);
         if ($user) {
             $this->sendResponse("success", "User data fetched successfully", $user);
         } else {
@@ -68,21 +68,21 @@ class UserController extends Controller
         }
 
         if(!empty($data['email'])){
-            $existedUser =  $this->userModel->getUserByEmail($data['email']);
+            $existedUser =  $this->userModel->getByEmail($data['email']);
             if($existedUser){
             $this->sendResponse("error", "Email already exists", null, 409);
             }
         }
 
         if(!empty($data['username'])){
-            $existedUser =  $this->userModel->getUserByUsername($data['username']);
+            $existedUser =  $this->userModel->getByUsername($data['username']);
             if($existedUser){
                 $this->sendResponse("error", "Username already exists", null, 409);
                 }
         }
 
         try {
-            $this->userModel->updateUser($id, $data);
+            $this->userModel->updateById($id, $data);
             $this->sendResponse("success", "User updated successfully", $data);
         } catch (\InvalidArgumentException $e) {
             $this->sendResponse("error", $e->getMessage(), [], 400);
@@ -106,7 +106,7 @@ class UserController extends Controller
 
     public function destroy(string $id): void
     {
-        if ($this->userModel->deleteUser($id)) {
+        if ($this->userModel->deleteById($id)) {
             $this->sendResponse("success", "User deleted successfully", $id);
         }
         $this->sendResponse("error", "Could not find User with ID $id", false);
