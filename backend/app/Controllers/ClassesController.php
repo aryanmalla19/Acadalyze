@@ -41,9 +41,18 @@ class ClassesController extends Controller
             'school_id' => 'required',
             'class_name' => 'required|min:1|max:50',
         ];
+        
+        if(!$this->classesModel->validate($data, $rules)){
+            $this->sendResponse("error", "Invalid Entry", $this->classesModel->getErrors(), 400); 
+        }
 
         $teacherSchoolId = User::find($data['class_teacher_id'])->school_id;
         $adminSchoolId = User::find($request->user['user_id'])->school_id;
+        $teacherRole = User::find($data['class_teacher_id'])->role_name;
+
+        if($teacherRole !== 'Teacher'){
+            $this->sendResponse("error", "Class teacher should be of 'teacher' role", null, 400); 
+        }
 
         if($adminSchoolId != $teacherSchoolId){
             $this->sendResponse("error", "Cannot assign teacher of another school", null, 400); 
@@ -57,9 +66,6 @@ class ClassesController extends Controller
             $this->sendResponse("error", "Cannot assign teacher that is already associated with another class", null, 400); 
         }
 
-        if(!$this->classesModel->validate($data, $rules)){
-            $this->sendResponse("error", "Invalid Entry", $this->classesModel->getErrors(), 400); 
-        }
 
         $newClass = $this->classesModel->create($data['class_teacher_id'], $data['school_id'], $data['class_name']);
         if($newClass){
