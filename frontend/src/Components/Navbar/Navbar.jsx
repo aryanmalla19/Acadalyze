@@ -18,7 +18,7 @@ const Navbar = () => {
         />
       </div>
       {/*  ICONS AND USERS */}
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-6 justify-end w-full">
         <div className="bg-gray-200 rounded-full w-10 h-10 cursor-pointer flex justify-center items-center">
           <LuMessageCircleMore className="w-[20px] h-[20px]" />
         </div>
