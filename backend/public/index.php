@@ -49,6 +49,7 @@ use App\Controllers\ExamController;
 use App\Controllers\SubjectsExamsController;
 use App\Controllers\MarksController;
 use App\Controllers\AttendanceController;
+use App\Controllers\StudentClassesController;
 
 
 $router = new Router();
@@ -62,6 +63,7 @@ $examController = new ExamController();
 $subjectsExamsController = new SubjectsExamsController();
 $marksController = new MarksController();
 $attendanceController = new AttendanceController();
+$studentClassesController = new StudentClassesController();
 
 
 // AUTH
@@ -291,6 +293,36 @@ $router->addRoute("DELETE", '/api/attendance/{id}', [$attendanceController, 'des
     [\App\Middleware\AuthMiddleware::class],
     [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
     [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\AttendancePolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Attendance::class]]]
+]);
+
+
+
+// STUDENT_CLASSES
+$router->addRoute("GET", '/api/student-classes', [$studentClassesController, 'index'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]]
+]);
+
+$router->addRoute("GET", '/api/student-classes/{id}', [$studentClassesController, 'show'], [
+    [\App\Middleware\AuthMiddleware::class], 
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\StuentsClassesPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\StudentsClasses::class]]]
+]);
+
+$router->addRoute("POST", '/api/student-classes', [$studentClassesController, 'create'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+]);
+
+$router->addRoute("PUT", '/api/student-classes/{id}', [$studentClassesController, 'update'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\StuentsClassesPolicy::class, 'action' => 'update', 'modelClass' => \App\Models\StudentsClasses::class]]]
+]);
+
+$router->addRoute("DELETE", '/api/student-classes/{id}', [$studentClassesController, 'destroy'], [
+    [\App\Middleware\AuthMiddleware::class],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\StuentsClassesPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\StudentsClasses::class]]]
 ]);
 
 $router->route();
