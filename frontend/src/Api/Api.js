@@ -5,6 +5,17 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
+export const login = async (data) => {
+  try {
+    const response = await axiosInstance.post("/login", data);
+    console.log(response.data, "api.js login");
+    return response.data;
+  } catch (error) {
+    console.error("Validation Errors:", error.response.data.errors);
+    throw new Error(error.response?.data?.message || "Login failed");
+  }
+};
+
 export const register = async (data) => {
   try {
     const response = await axiosInstance.post("/register", data);
@@ -27,13 +38,13 @@ export const checkAuth = async () => {
   }
 };
 
-export const login = async (data) => {
+export const logout = async () => {
   try {
-    const response = await axiosInstance.post("/login", data);
-    console.log(response.data, "api.js login");
+    const response = await axiosInstance.post("/logout");
+    console.log(response.data, "api.js logout");
     return response.data;
   } catch (error) {
-    console.error("Validation Errors:", error.response.data.errors);
-    throw new Error(error.response?.data?.message || "Login failed");
+    console.error("Lgout Errors:", error.response.data.errors);
+    throw new Error(error.response?.data?.message || "Logout failed");
   }
 };

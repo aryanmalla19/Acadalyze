@@ -1,7 +1,5 @@
 import { useForm } from "react-hook-form";
-
 import { FaUser, FaLock } from "react-icons/fa";
-
 import InputField from "../Auth/InputField";
 import { AuthButton } from "../Common/buttons";
 import { checkAuth, login } from "../../Api/Api";
@@ -10,33 +8,46 @@ import { AuthContext } from "../../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const Login = ({ isLoggedIn }) => {
-  const [isLogginIn, setIsLoggingIn] = useState(true);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const { setAuthUser, authUser } = useContext(AuthContext);
   const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
+    formState: { errors },
+    setError,
+    clearErrors,
   } = useForm();
 
   const onSubmit = async (data) => {
-    console.log(data);
+    setIsLoggingIn(true);
+    clearErrors();
+
     try {
       await login(data);
       const response1 = await checkAuth();
       setAuthUser(response1.data.role);
     } catch (error) {
       console.error("Login failed", error);
+
+      setError("identifier", {
+        type: "manual",
+        message: "Invalid username or email. Please try again.",
+      });
+      setError("password", {
+        type: "manual",
+        message: "Invalid password. Please try again.",
+      });
+
       setAuthUser(null);
     } finally {
       setIsLoggingIn(false);
-      reset();
     }
   };
 
   useEffect(() => {
-    if (authUser == "Admin") {
+    if (authUser) {
       navigate("/home");
     }
   }, [authUser]);
@@ -69,7 +80,7 @@ const Login = ({ isLoggedIn }) => {
         errors={errors.password}
       />
 
-      <AuthButton isLoggedIn={isLoggedIn} isSubmitting={isSubmitting} />
+      <AuthButton isLoggedIn={isLoggedIn} isLoggingIn={isLoggingIn} />
     </form>
   );
 };
