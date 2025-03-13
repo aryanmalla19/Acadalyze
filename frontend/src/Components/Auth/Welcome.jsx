@@ -11,7 +11,7 @@ const Welcome = ({ isLoggedIn, toggleAuthMode }) => {
       </p>
       <button
         onClick={toggleAuthMode}
-        className="p-2 border-2 border-white w-30 rounded-[10px] hover:bg-white hover:text-[#7494ec] transition-all cursor-pointer font-semibold"
+        className="p-2 border-2 border-white w-30 rounded-[10px] hover:bg-white hover:text-primary transition-all cursor-pointer font-semibold"
       >
         {isLoggedIn ? "Register" : "Login"}
       </button>

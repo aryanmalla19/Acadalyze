@@ -30,7 +30,7 @@ const App = () => {
           element={authUser ? <Navigate to="/home" /> : <Auth />}
         />
 
-        {authUser == "Admin" ? (
+        {authUser ? (
           <Route element={<MainLayout />}>
             <Route path="/home" element={<Home />} />
           </Route>
