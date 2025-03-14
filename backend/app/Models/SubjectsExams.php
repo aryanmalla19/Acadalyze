@@ -8,15 +8,42 @@ class SubjectsExams extends Model
 {
     public function findById($id)
     {
-        $stmt = $this->db->prepare("SELECT * FROM subjects_exams WHERE subjects_exams_id = :subjects_exams_id");
+        $stmt = $this->db->prepare("SELECT * FROM subjects_exams s LEFT JOIN exams e ON e.exam_id = s.exam_id LEFT JOIN subjects sub ON sub.subject_id = s.subject_id  WHERE subjects_exams_id = :subjects_exams_id");
         $stmt->execute([':subjects_exams_id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
     }
 
     public function getAllBySchoolId($id)
     {
-        $stmt = $this->db->prepare("SELECT * FROM subjects_exams s LEFT JOIN exams e ON e.exam_id = s.exam_id  WHERE e.school_id = :school_id");
+        $stmt = $this->db->prepare("SELECT * FROM subjects_exams s LEFT JOIN exams e ON e.exam_id = s.exam_id LEFT JOIN subjects sub ON sub.subject_id = s.subject_id  WHERE e.school_id = :school_id");
         $stmt->execute([':school_id' => $id]);
+        
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $result ?: []; 
+    }
+
+    public function getAllBySchoolIdAndExamId($id, $examId)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM subjects_exams s LEFT JOIN exams e ON e.exam_id = s.exam_id LEFT JOIN subjects sub ON sub.subject_id = s.subject_id  WHERE e.school_id = :school_id AND s.exam_id =:exam_id");
+        $stmt->execute([':school_id' => $id, ':exam_id'=>$examId]);
+        
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $result ?: []; 
+    }
+
+    public function getAllBySchoolIdAndSubjectId($id, $subjectId)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM subjects_exams s LEFT JOIN exams e ON e.exam_id = s.exam_id LEFT JOIN subjects sub ON sub.subject_id = s.subject_id  WHERE e.school_id = :school_id AND s.subject_id =:subject_id");
+        $stmt->execute([':school_id' => $id, ':subject_id'=>$subjectId]);
+        
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $result ?: []; 
+    }
+
+    public function getAllBySchoolIdSubjectIdExamId($id, $subjectId, $examId)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM subjects_exams s LEFT JOIN exams e ON e.exam_id = s.exam_id LEFT JOIN subjects sub ON sub.subject_id = s.subject_id  WHERE e.school_id = :school_id AND s.subject_id =:subject_id AND s.exam_id =:exam_id");
+        $stmt->execute([':school_id' => $id, ':subject_id'=>$subjectId, ':exam_id'=>$examId]);
         
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $result ?: []; 
@@ -29,7 +56,6 @@ class SubjectsExams extends Model
     
         return $success ? $this->db->lastInsertId() : false;
     }
-    
 
     public function updateById($id, $data)
     {

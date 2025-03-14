@@ -15,17 +15,27 @@ class StudentsClasses extends Model
 
     public function getAllBySchoolId($id)
     {
-        $stmt = $this->db->prepare("SELECT * FROM student_classes s LEFT JOIN classes c ON c.class_id = s.class_id  WHERE c.school_id = :school_id");
+        $stmt = $this->db->prepare("SELECT s.*, u.first_name, u.last_name FROM student_classes s LEFT JOIN classes c ON c.class_id = s.class_id LEFT JOIN users u ON u.user_id = s.student_id WHERE c.school_id = :school_id");
         $stmt->execute([':school_id' => $id]);
         
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $result ?: []; 
     }
 
-    public function create($student_id, $exam_id, $enrollment_date)
+    public function getAllBySchoolIdAndClassId($schoolId, $classId)
     {
-        $stmt = $this->db->prepare("INSERT INTO student_classes (student_id, exam_id, enrollment_date) VALUES (:student_id, :exam_id, :enrollment_date)");
-        $success = $stmt->execute([':student_id' => $student_id, ':exam_id' => $exam_id, ':enrollment_date' => $enrollment_date]);
+        $stmt = $this->db->prepare("SELECT s.*, u.first_name, u.last_name FROM student_classes s LEFT JOIN classes c ON c.class_id = s.class_id LEFT JOIN users u ON u.user_id=s.student_id WHERE c.school_id = :school_id AND s.class_id = :class_id");
+        $stmt->execute([
+            ':school_id' => $schoolId,
+            ':class_id'  => $classId
+        ]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
+
+    public function create($student_id, $class_id, $enrollment_date)
+    {
+        $stmt = $this->db->prepare("INSERT INTO student_classes (student_id, class_id, enrollment_date) VALUES (:student_id, :class_id, :enrollment_date)");
+        $success = $stmt->execute([':student_id' => $student_id, ':class_id' => $class_id, ':enrollment_date' => $enrollment_date]);
     
         return $success ? $this->db->lastInsertId() : false;
     }
@@ -53,7 +63,6 @@ class StudentsClasses extends Model
         return $stmt->rowCount() > 0;
     }
 
-
     public static function find(string $id): ?static
     {
         $stmt = static::$pdo->prepare("SELECT * FROM student_classes WHERE student_class_id = :student_class_id LIMIT 1");
@@ -77,5 +86,4 @@ class StudentsClasses extends Model
         $result = $stmt->execute();
         return $result && $stmt->rowCount() > 0;
     }
-
 }

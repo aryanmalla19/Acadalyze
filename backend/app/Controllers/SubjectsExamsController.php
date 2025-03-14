@@ -14,13 +14,34 @@ class SubjectsExamsController extends Controller
 
     public function index(Request $request)
     {
-        $schooolId = $request->getUser()->school_id;
-        $subjectsExams = $this->subjectsExamsModel->getAllBySchoolId($schooolId);
-        if(empty($subjectsExams)){
-            $this->sendResponse("error", "Exam data not found", null, 404);
+        $schoolId = $request->getUser()->school_id;
+    
+        if (!$schoolId) {
+            $this->sendResponse("error", "You are not associated with any school", null, 403);
         }
-        $this->sendResponse("success", "All Exams fetched sucessfully", $subjectsExams);
+    
+        // Get query parameters (subject_id, exam_id)
+        $subjectId = $request->getQuery('subject_id');
+        $examId = $request->getQuery('exam_id');
+    
+        // Fetch data based on provided filters
+        if ($subjectId && $examId) {
+            $subjectsExams = $this->subjectsExamsModel->getAllBySchoolIdSubjectIdExamId($schoolId, $subjectId, $examId);
+        } elseif ($subjectId) {
+            $subjectsExams = $this->subjectsExamsModel->getAllBySchoolIdAndSubjectId($schoolId, $subjectId);
+        } elseif ($examId) {
+            $subjectsExams = $this->subjectsExamsModel->getAllBySchoolIdAndExamId($schoolId, $examId);
+        } else {
+            $subjectsExams = $this->subjectsExamsModel->getAllBySchoolId($schoolId);
+        }
+    
+        if (empty($subjectsExams)) {
+            $this->sendResponse("error", "Subjects_Exams data not found", null, 404);
+        }
+    
+        $this->sendResponse("success", "All Subjects_Exams fetched successfully", $subjectsExams);
     }
+    
 
     public function show(Request $request, $id)
     {

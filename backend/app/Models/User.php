@@ -13,6 +13,15 @@ class User extends Model {
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    public function getAllBySchoolIdAndRole($school_id, $role): array
+    {
+        $stmt = $this->db->prepare("SELECT u.*, NULL as password, r.role_name 
+            FROM users u 
+            LEFT JOIN roles r ON u.role_id = r.role_id WHERE u.school_id = :school_id AND r.role_name = :role_name");
+        $stmt->execute([':school_id'=> $school_id, ':role_name' => $role]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     // Get a user by ID
     public function findById($id): bool|array
     {
@@ -45,7 +54,7 @@ class User extends Model {
 
     public function create(array $data): bool
     {
-        $stmt = $this->db->prepare("INSERT INTO users (email, password, username, first_name, last_name, address, phone_number, parent_phone_number, date_of_birth, role_id ) VALUES (:email, :password, :username, :first_name, :last_name, :address, :phone_number, :parent_phone_number, :date_of_birth, :role_id)");
+        $stmt = $this->db->prepare("INSERT INTO users (email, password, username, first_name, last_name, address, phone_number, parent_phone_number, date_of_birth, role_id, school_id ) VALUES (:email, :password, :username, :first_name, :last_name, :address, :phone_number, :parent_phone_number, :date_of_birth, :role_id, :school_id)");
         return $stmt->execute([
             ':email' => $data['email'],
             ':password' => $data['password'],
@@ -57,6 +66,7 @@ class User extends Model {
             ':parent_phone_number' => $data['parent_phone_number'],
             ':date_of_birth' => $data['date_of_birth'],
             ':role_id' => $data['role_id'],
+            ':school_id' => $data['school_id']
         ]);
     }
 

@@ -14,13 +14,26 @@ class StudentClassesController extends Controller
 
     public function index(Request $request)
     {
-        $schooolId = $request->getUser()->school_id;
-        $studentClasses = $this->studentClassesModel->getAllBySchoolId($schooolId);
-        if(empty($studentClasses)){
+        $schoolId = $request->getUser()->school_id;
+        $classId = $request->getQuery('class_id');
+    
+        if (!$schoolId) {
+            $this->sendResponse("error", "You are not associated with any school", null, 403);
+        }
+    
+        if ($classId) {
+            $studentClasses = $this->studentClassesModel->getAllBySchoolIdAndClassId($schoolId, $classId);
+        } else {
+            $studentClasses = $this->studentClassesModel->getAllBySchoolId($schoolId);
+        }
+    
+        if (empty($studentClasses)) {
             $this->sendResponse("error", "Student_Classes data not found", null, 404);
         }
-        $this->sendResponse("success", "All Student_Classes data fetched sucessfully", $studentClasses);
+    
+        $this->sendResponse("success", "All Student_Classes data fetched successfully", $studentClasses);
     }
+    
 
     public function show(Request $request, $id)
     {
@@ -75,7 +88,7 @@ class StudentClassesController extends Controller
     public function create(Request $request)
     {
         $data = $request->body + [
-            'stuent_id' => '',
+            'student_id' => '',
             'class_id' => '',
             'enrollment_date' => '',
         ];

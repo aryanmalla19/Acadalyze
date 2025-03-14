@@ -7,14 +7,14 @@ class Classes extends Model
 {
     public function findById($id)
     {
-        $stmt = $this->db->prepare("SELECT * FROM classes WHERE class_id = :class_id LIMIT 1");
+        $stmt = $this->db->prepare("SELECT c.class_id, c.class_teacher_id, c.class_name, u.first_name, u.last_name, c.school_id  FROM classes c LEFT JOIN users u ON c.class_teacher_id = u.user_id  WHERE c.class_id = :class_id LIMIT 1");
         $stmt->execute([':class_id' => $id]);
         return $stmt->fetch(\PDO::FETCH_ASSOC)??null;
     }
 
     public function getAllBySchoolId($id)
     {
-        $stmt = $this->db->prepare("SELECT * FROM classes WHERE school_id = :school_id");
+        $stmt = $this->db->prepare("SELECT c.class_id, c.class_teacher_id, c.class_name, u.first_name, u.last_name, c.school_id FROM classes c LEFT JOIN users u ON c.class_teacher_id = u.user_id WHERE c.school_id = :school_id");
         $stmt->execute([':school_id' => $id]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC)??null;  
     }

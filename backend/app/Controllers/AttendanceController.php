@@ -11,11 +11,52 @@ class AttendanceController extends Controller
     {
         $this->attendanceModel = $this->model('Attendance');
     }
-
+    
     public function index(Request $request)
     {
-        
+        $schoolId = $request->getUser()->school_id;
+        $studentId = $request->getQuery('student_id');
+        $classId = $request->getQuery('class_id');
+        $startDate = $request->getQuery('start_date'); // User-provided start date
+        $endDate = $request->getQuery('end_date');     // User-provided end date
+
+        if (!$schoolId) {
+            $this->sendResponse("error", "You are not associated with any school", null, 403);
+        }
+
+        // Validate date inputs if provided
+        if ($startDate && !strtotime($startDate)) {
+            $this->sendResponse("error", "Invalid start_date format. Use YYYY-MM-DD.", null, 400);
+        }
+        if ($endDate && !strtotime($endDate)) {
+            $this->sendResponse("error", "Invalid end_date format. Use YYYY-MM-DD.", null, 400);
+        }
+
+        // Use default date range (last 1 month) if both start_date and end_date are not provided
+        if (!$startDate && !$endDate) {
+            $startDate = date('Y-m-d', strtotime('-1 month'));
+            $endDate = date('Y-m-d');
+        }
+
+        // Fetch attendance data based on available filters
+        if ($studentId && $classId) {
+            $attendances = $this->attendanceModel->getByStudentClassAndDateRange($schoolId, $studentId, $classId, $startDate, $endDate);
+        } elseif ($studentId) {
+            $attendances = $this->attendanceModel->getByStudentAndDateRange($schoolId, $studentId, $startDate, $endDate);
+        } elseif ($classId) {
+            $attendances = $this->attendanceModel->getByClassAndDateRange($schoolId, $classId, $startDate, $endDate);
+        } else {
+            $attendances = $this->attendanceModel->getAllBySchoolIdAndDateRange($schoolId, $startDate, $endDate);
+        }
+
+        if (empty($attendances)) {
+            $this->sendResponse("error", "Attendance data not found.", [], 404);
+        }
+
+        $this->sendResponse("success", "Attendance data fetched successfully from $startDate to $endDate", $attendances);
     }
+
+    
 
     public function show(Request $request, $id)
     {

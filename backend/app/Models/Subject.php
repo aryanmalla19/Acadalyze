@@ -8,7 +8,11 @@ class Subject extends Model
 {
     public function findById($id)
     {
-        $stmt = $this->db->prepare("SELECT * FROM subjects WHERE subject_id = :subject_id");
+        $stmt = $this->db->prepare("SELECT subjects.*, classes.class_name, u.first_name, u.last_name
+            FROM subjects 
+            LEFT JOIN classes ON subjects.class_id = classes.class_id 
+            LEFT JOIN users u ON u.user_id = subjects.teacher_id
+            WHERE subject_id = :subject_id");
         $stmt->execute([':subject_id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
     }
@@ -16,12 +20,29 @@ class Subject extends Model
     public function getAllBySchoolId($id)
     {
         $stmt = $this->db->prepare("
-            SELECT subjects.*, classes.class_name
+            SELECT subjects.*, classes.class_name, u.first_name, u.last_name
             FROM subjects 
             LEFT JOIN classes ON subjects.class_id = classes.class_id 
+            LEFT JOIN users u ON u.user_id = subjects.teacher_id
             WHERE classes.school_id = :school_id
         ");
         $stmt->execute([':school_id' => $id]);
+        
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        return $result ?: []; 
+    }
+
+    public function getAllBySchoolIdAndClassId($id, $classId)
+    {
+        $stmt = $this->db->prepare("
+            SELECT subjects.*, classes.class_name, u.first_name, u.last_name
+            FROM subjects 
+            LEFT JOIN classes ON subjects.class_id = classes.class_id 
+            LEFT JOIN users u ON u.user_id = subjects.teacher_id
+            WHERE classes.school_id = :school_id AND subjects.class_id = :class_id
+        ");
+        $stmt->execute([':school_id' => $id, ':class_id' => $classId]);
         
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
