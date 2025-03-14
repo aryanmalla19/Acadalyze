@@ -2,6 +2,9 @@ import React from "react";
 import Header from "../Components/Common/Header";
 import UserCard from "./UserCard";
 import CountCard from "./CountCard";
+import Attendance from "./Attendence";
+import { Calendar } from "lucide-react";
+import EventCalender from "./EventCalender";
 
 const Home = () => {
   return (
@@ -17,16 +20,20 @@ const Home = () => {
         {/* Middle Charts */}
         <div className="flex flex-col lg:flex-row gap-4 ml-5 mt-5">
           {/* Count Charts */}
-          <div className="w-full lg:w-1/3 h-[400px] bg-white">
+          <div className="w-full lg:w-1/3 h-[400px] bg-white rounded-lg shadow-md">
             <CountCard />
           </div>
           {/* Attendence Charts */}
-          <div className="w-full lg:w-2/3 bg-white">{/* <CountCard /> */}</div>
+          <div className="w-full lg:w-2/3 bg-white rounded-lg shadow-md">
+            <Attendance />
+          </div>
         </div>
       </div>
 
       {/* RIGHT */}
-      <div className="w-full lg:w-1/3 bg-green-300">right</div>
+      <div className="w-full lg:w-1/3 bg-green-300 mt-5 ">
+        <EventCalender />
+      </div>
     </div>
   );
 };
