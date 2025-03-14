@@ -14,8 +14,52 @@ class MarksController extends Controller
 
     public function index(Request $request)
     {
-
+        $schoolId = $request->getUser()->school_id;
+    
+        if (!$schoolId) {
+            $this->sendResponse("error", "You are not associated with any school", null, 403);
+        }
+    
+        // Get query parameters
+        $studentId = $request->getQuery('student_id');
+        $classId = $request->getQuery('class_id');
+        $subjectsExamsId = $request->getQuery('subjects_exams_id');
+        $examId = $request->getQuery('exam_id');  // New exam_id query param
+    
+        // Fetch data based on provided filters
+        if ($studentId && $classId && $subjectsExamsId && $examId) {
+            $marks = $this->marksModel->getAllByStudentClassSubjectsExamsAndExamId($schoolId, $studentId, $classId, $subjectsExamsId, $examId);
+        } elseif ($studentId && $classId && $examId) {
+            $marks = $this->marksModel->getAllByStudentClassAndExamId($schoolId, $studentId, $classId, $examId);
+        } elseif ($studentId && $subjectsExamsId && $examId) {
+            $marks = $this->marksModel->getAllByStudentSubjectsExamsAndExamId($schoolId, $studentId, $subjectsExamsId, $examId);
+        } elseif ($studentId && $examId) {
+            $marks = $this->marksModel->getAllByStudentAndExamId($schoolId, $studentId, $examId);
+        } elseif ($classId && $examId) {
+            $marks = $this->marksModel->getAllByClassIdAndExamId($schoolId, $classId, $examId);
+        } elseif ($studentId && $classId) {
+            $marks = $this->marksModel->getAllByStudentAndClass($schoolId, $studentId, $classId);
+        } elseif ($studentId && $subjectsExamsId) {
+            $marks = $this->marksModel->getAllByStudentAndSubjectsExams($schoolId, $studentId, $subjectsExamsId);
+        } elseif ($examId) {
+            $marks = $this->marksModel->getAllByExamId($schoolId, $examId);
+        }elseif ($subjectsExamsId) {
+            $marks = $this->marksModel->getAllBySubjectsExamId($schoolId, $subjectsExamsId);
+        } elseif ($classId) {
+            $marks = $this->marksModel->getAllByClassId($schoolId, $classId);
+        } elseif ($studentId) {
+            $marks = $this->marksModel->getAllByStudentId($schoolId, $studentId);
+        } else {
+            $marks = $this->marksModel->getAllBySchoolId($schoolId);
+        }
+    
+        if (empty($marks)) {
+            $this->sendResponse("error", "Marks data not found.", [], 404);
+        }
+    
+        $this->sendResponse("success", "Marks data fetched successfully", $marks);
     }
+    
 
     public function show(Request $request, $id)
     {

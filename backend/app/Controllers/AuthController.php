@@ -38,7 +38,7 @@ class AuthController extends Controller
             // Set the token as a cookie with the httpOnly flag to prevent JS access
             setcookie('token', $token, time() + JWT_EXPIRATION, '/', '', false, true);
             
-            $this->sendResponse("success", "Login successful");
+            $this->sendResponse("success", "Login successful", ['email'=>$userData['email'], 'username'=> $userData['username'], 'role'=>$userData['role_name']]);
         } catch (Exception $e) {
             $this->sendResponse("error", "Internal Server Error", [], 500);
         }
@@ -71,6 +71,21 @@ class AuthController extends Controller
             'date_of_birth' => 'required',
             'role' => 'required',
         ];
+
+
+        if(!empty($data['school_id'])){
+            $token = $request->getCookie('token', '');     
+            if ($token) {
+                $userData = Auth::validateToken($token);
+                if (!isset($userData) || !$userData) {
+                $this->sendResponse("error", "You must be logged in to register other users", [], 400);
+                }
+            }
+            $currentUser = User::find($userData['user_id']);
+            if($currentUser->school_id != $data['school_id']){
+                $this->sendResponse("error", "Cannot register user of another school", [], 400);
+            }
+        }
 
         // Validate the data
         $user = new User();
@@ -111,9 +126,10 @@ class AuthController extends Controller
                 'date_of_birth' => $data['date_of_birth'],
                 'phone_number' => $data['phone_number'],
                 'parent_phone_number' => $data['parent_phone_number'],
-                'role_id' => $userRole['role_id']
+                'role_id' => $userRole['role_id'],
+                'school_id' => $userRole['school_id'],
             ]);
-            $this->sendResponse("success", "Registration successful", $newUser);
+            $this->sendResponse("success", "Registration successful", ['email'=>$data['email'], 'username'=>$data['username'], 'role'=>$data['role']]);
         } catch (Exception $e) {
             $this->sendResponse("error", "Internal Server Error", [], 500);
         }

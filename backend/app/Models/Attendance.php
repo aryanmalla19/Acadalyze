@@ -12,13 +12,91 @@ class Attendance extends Model
         $stmt->execute([':attendance_id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
     }
-    public function getAllByClassId($id)
+
+    public function getAllBySchoolIdAndDateRange($schoolId, $startDate, $endDate)
     {
-        $stmt = $this->db->prepare("SELECT * FROM attendance WHERE marks.class_id = :class_id");
+        $stmt = $this->db->prepare(
+            "SELECT * 
+             FROM attendance a 
+             LEFT JOIN classes c ON a.class_id = c.class_id 
+             WHERE c.school_id = :school_id 
+               AND a.attendance_date BETWEEN :start_date AND :end_date"
+        );
         
-        $stmt->execute([':class_id' => $id]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: []; 
+        $stmt->execute([
+            ':school_id'  => $schoolId,
+            ':start_date' => $startDate,
+            ':end_date'   => $endDate
+        ]);
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
+    
+    public function getByClassAndDateRange($schoolId, $classId, $startDate, $endDate)
+    {
+        $stmt = $this->db->prepare(
+            "SELECT * 
+             FROM attendance a 
+             LEFT JOIN classes c ON a.class_id = c.class_id 
+             WHERE c.school_id = :school_id 
+               AND a.class_id = :class_id 
+               AND a.attendance_date BETWEEN :start_date AND :end_date"
+        );
+        
+        $stmt->execute([
+            ':school_id'  => $schoolId,
+            ':class_id'   => $classId,
+            ':start_date' => $startDate,
+            ':end_date'   => $endDate
+        ]);
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
+    
+    public function getByStudentAndDateRange($schoolId, $studentId, $startDate, $endDate)
+    {
+        $stmt = $this->db->prepare(
+            "SELECT * 
+             FROM attendance a 
+             LEFT JOIN classes c ON a.class_id = c.class_id 
+             WHERE c.school_id = :school_id 
+               AND a.student_id = :student_id 
+               AND a.attendance_date BETWEEN :start_date AND :end_date"
+        );
+        
+        $stmt->execute([
+            ':school_id'  => $schoolId,
+            ':student_id' => $studentId,
+            ':start_date' => $startDate,
+            ':end_date'   => $endDate
+        ]);
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
+    
+    public function getByStudentClassAndDateRange($schoolId, $studentId, $classId, $startDate, $endDate)
+    {
+        $stmt = $this->db->prepare(
+            "SELECT * 
+             FROM attendance a 
+             LEFT JOIN classes c ON a.class_id = c.class_id 
+             WHERE c.school_id = :school_id 
+               AND a.student_id = :student_id 
+               AND a.class_id = :class_id 
+               AND a.attendance_date BETWEEN :start_date AND :end_date"
+        );
+        
+        $stmt->execute([
+            ':school_id'  => $schoolId,
+            ':student_id' => $studentId,
+            ':class_id'   => $classId,
+            ':start_date' => $startDate,
+            ':end_date'   => $endDate
+        ]);
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
+    
     
     public function create($student_id, $class_id, $attendance_date, $status)
     {

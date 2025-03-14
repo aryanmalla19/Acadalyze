@@ -28,14 +28,28 @@ class SubjectController extends Controller
     {
         $userId = $request->user['user_id'];
         $schoolId = User::find($userId)->school_id;
-
-        $subjects = $this->subjectModel->getAllBySchoolId($schoolId);
-        if(empty($subjects)){
-            $this->sendResponse('error', "Subjects not found. Your school does not have any subjects.", null, 404);
+    
+        if (!$schoolId) {
+            $this->sendResponse('error', "You are not associated with any school", null, 403);
         }
-
-        $this->sendResponse('success', "All Subjects fetched sucessfully", $subjects);
+    
+        // Get class_id from query parameters (optional)
+        $classId = $request->getQuery('class_id');
+    
+        // Fetch subjects based on school_id (and class_id if provided)
+        if ($classId) {
+            $subjects = $this->subjectModel->getAllBySchoolIdAndClassId($schoolId, $classId);
+        } else {
+            $subjects = $this->subjectModel->getAllBySchoolId($schoolId);
+        }
+    
+        if (empty($subjects)) {
+            $this->sendResponse('error', "Subjects data not found.", null, 404);
+        }
+    
+        $this->sendResponse('success', "All Subjects fetched successfully", $subjects);
     }
+    
 
     public function create(Request $request): void
     {

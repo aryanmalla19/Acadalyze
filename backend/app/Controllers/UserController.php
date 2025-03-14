@@ -17,19 +17,26 @@ class UserController extends Controller
     public function index(Request $request): void
     {
         $school_id = $request->getUser()->school_id;
-
-        if(!$school_id){
-            $this->sendResponse("error", "You are not asssociated with any school", $users);
+    
+        if (!$school_id) {
+            $this->sendResponse("error", "You are not associated with any school", null);
         }
-        
-        $users = $this->userModel->getAllBySchoolId($school_id);
-        
-        if(!empty($users)){
+    
+        $role = $request->getQuery('role');
+    
+        if ($role) {
+            $users = $this->userModel->getAllBySchoolIdAndRole($school_id, $role);
+        } else {
+            $users = $this->userModel->getAllBySchoolId($school_id);
+        }
+    
+        if (!empty($users)) {
             $this->sendResponse("success", "All Users data fetched successfully", $users);
         }
-
+    
         $this->sendResponse("error", "No Users data found", null, 404);
     }
+    
 
     public function show(Request $request, string $id): void 
     {
@@ -111,4 +118,5 @@ class UserController extends Controller
         }
         $this->sendResponse("error", "Could not find User with ID $id", false);
     }
+
 }
