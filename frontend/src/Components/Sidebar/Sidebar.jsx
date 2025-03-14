@@ -9,7 +9,7 @@ const Sidebar = () => {
       <Link to="/home">
         <header className="flex items-center justify-center lg:justify-start gap-2">
           <div>
-            <img src={logo} alt="logo" />{" "}
+            <img src={logo} alt="logo" className="w-16 h-16" />
           </div>
 
           <span className="hidden lg:block">Acadalyze</span>

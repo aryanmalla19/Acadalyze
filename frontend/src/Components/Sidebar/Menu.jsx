@@ -116,25 +116,35 @@ const menuItems = [
 ];
 
 const Menu = () => {
+  const userRole = localStorage.getItem("role") || "student"; // Default role
+
   return (
-    <div className="mt-4 text-sm">
-      {menuItems.map((item) => (
-        <div className="flex flex-col gap-2" key={item.title}>
-          <span className="hidden lg:block text-gray-400 font-light my-4">
-            {item.title}
-          </span>
-          {item.items.map((item) => (
-            <Link
-              to={`${item.href}`}
-              key={item.label}
-              className="flex items-center justify-center lg:justify-start gap-4 tex-gray-200 py-2 hover:bg-stone-100 px-1 rounded"
-            >
-              <img src={item.icon} alt={item.label} className="size-5" />
-              <span className="hidden lg:block">{item.label}</span>
-            </Link>
-          ))}
-        </div>
-      ))}
+    <div className="text-sm">
+      {menuItems.map((category) => {
+        const filteredItems = category.items.filter((item) =>
+          item.visible.includes(userRole)
+        );
+
+        if (filteredItems.length === 0) return null; // Hide category if no visible items
+
+        return (
+          <div className="flex flex-col gap-2" key={category.title}>
+            <span className="hidden lg:block text-gray-700 font-light my-4">
+              {category.title}
+            </span>
+            {filteredItems.map((item) => (
+              <Link
+                to={item.href}
+                key={item.label}
+                className="flex items-center justify-center lg:justify-start gap-4 text-gray-700 py-2 hover:bg-stone-100 px-1 rounded"
+              >
+                <img src={item.icon} alt={item.label} className="size-5" />
+                <span className="hidden lg:block">{item.label}</span>
+              </Link>
+            ))}
+          </div>
+        );
+      })}
     </div>
   );
 };
