@@ -7,7 +7,7 @@ const menuItems = [
       {
         icon: "/home.png",
         label: "Home",
-        href: "/",
+        href: "/all",
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
@@ -116,7 +116,7 @@ const menuItems = [
 ];
 
 const Menu = () => {
-  const userRole = localStorage.getItem("role") || "student"; // Default role
+  const userRole = localStorage.getItem("role") || "teacher"; // Default role
 
   return (
     <div className="text-sm">
