@@ -3,11 +3,11 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
-      backgroundColor: {
-        primary: "#7494ec",
-      },
       colors: {
         primary: "#7494ec",
+        skyBlue: "#C3EBFA",
+        lightSkyBlue: "#CFCEFF",
+        green: "#6ACF65",
       },
     },
   },
