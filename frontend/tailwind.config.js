@@ -8,6 +8,7 @@ export default {
         skyBlue: "#C3EBFA",
         lightSkyBlue: "#CFCEFF",
         green: "#6ACF65",
+        customYellow: ""
       },
     },
   },
