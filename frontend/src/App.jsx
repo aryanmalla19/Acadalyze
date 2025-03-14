@@ -2,14 +2,14 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import Page1 from "./Pages/UserCard";
-import Page2 from "./Pages/CountCard";
-import Page3 from "./Pages/Page3";
-import Page4 from "./Pages/Page4";
+import Page1 from "./AdminPage/UserCard";
+import Page2 from "./AdminPage/CountCard";
+import Page3 from "./AdminPage/Attendence";
+import Page4 from "./AdminPage/EventCalender";
 import Sidebar from "./Components/Sidebar/Sidebar";
 
-import Home from "./Pages/Home";
-import Auth from "./Pages/Auth";
+import Home from "./AdminPage/Home";
+import Auth from "./AdminPage/Auth";
 import MainLayout from "./Layout/MainLayout";
 import useVerifyAuth from "./CustoomHook/useVerifyAuth";
 import PageLoader from "./Components/Common/PageLoader";
