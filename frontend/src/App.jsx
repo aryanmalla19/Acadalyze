@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
+import React from "react";
 
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import Page1 from "./AdminPage/UserCard";
-import Page2 from "./AdminPage/CountCard";
-import Page3 from "./AdminPage/Attendence";
-import Page4 from "./AdminPage/EventCalender";
+import Page1 from "./AdminPage/Dashboard/UserCard";
+import Page2 from "./AdminPage/Dashboard/CountCard";
+import Page3 from "./AdminPage/Dashboard/Attendence";
+import Page4 from "./AdminPage/Dashboard/EventCalender";
 import Sidebar from "./Components/Sidebar/Sidebar";
 
-import Home from "./AdminPage/Home";
+import Home from "./AdminPage/Dashboard/Home";
 import Auth from "./AdminPage/Auth";
 import MainLayout from "./Layout/MainLayout";
 import useVerifyAuth from "./CustoomHook/useVerifyAuth";

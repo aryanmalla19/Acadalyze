@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "../Components/Common/Header";
+import Header from "../../Components/Common/Header";
 import UserCard from "./UserCard";
 import CountCard from "./CountCard";
 import Attendance from "./Attendence";
