@@ -11,6 +11,8 @@ import TeacherList from "./Components/TeacherPage/TeacherList";
 import StudentList from "./Components/StudentPage/StudentList";
 import ParentList from "./Components/ParentsPage/ParentsList";
 import SubjectTeacher from "./Components/SubjectsPage/SubjectTeacher";
+import ClassesList from "./Components/ClassesPage/ClassesList";
+import ExamList from "./Components/ExamPage/ExamList";
 
 const App = () => {
   const { authUser, isCheckingAuth } = useVerifyAuth();
@@ -35,6 +37,8 @@ const App = () => {
             <Route path="/list/students" element={<StudentList />} />
             <Route path="/list/parents" element={<ParentList />} />
             <Route path="/list/subjects" element={<SubjectTeacher />} />
+            <Route path="/list/classes" element={<ClassesList />} />
+            <Route path="/list/exams" element={<ExamList />} />
           </Route>
         ) : (
           <Route path="*" element={<Navigate to="/auth" />} />
