@@ -9,10 +9,6 @@ class AttendancePolicy implements Policy
 {
     public function view($user, $model): bool
     {
-        $class = Classes::find($model->class_id);
-        if($class->school_id !== $user->school_id){
-            return false;
-        }
         $student = User::find($model->student_id);
         return $user->school_id === $student->school_id;
     }

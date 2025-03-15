@@ -14,6 +14,9 @@ class UserPolicy implements Policy
     
     public function update($user, $model): bool
     {
+        if(!empty($model->school_id)){
+            return $user->user_id === $model->user_id && $user->school_id === $model->school_id;
+        }
         return $user->user_id === $model->user_id;
     }
 }

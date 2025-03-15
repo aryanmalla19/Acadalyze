@@ -78,10 +78,20 @@ class AuthController extends Controller
             if ($token) {
                 $userData = Auth::validateToken($token);
                 if (!isset($userData) || !$userData) {
-                $this->sendResponse("error", "You must be logged in to register other users", [], 400);
+                $this->sendResponse("error", "You must be logged in to register other users", [], 403);
                 }
             }
+            
             $currentUser = User::find($userData['user_id']);
+            if ($currentUser['role_name'] != 'Admin' && $currentUser['role_name'] != 'Teacher') {
+                $this->sendResponse("error", "You must be an Admin or Teacher", [], 403);
+            }
+
+            if($currentUser['role_name'] == 'Teacher' ){
+                if($data['role'] == 'Teacher' || $data['role'] == 'Admin'){
+                    $this->sendResponse("error", "Cannot register Teacher or Admin when you are Teacher", [], 403);
+                }
+            }
             if($currentUser->school_id != $data['school_id']){
                 $this->sendResponse("error", "Cannot register user of another school", [], 400);
             }
@@ -129,7 +139,7 @@ class AuthController extends Controller
                 'role_id' => $userRole['role_id'],
                 'school_id' => $userRole['school_id'],
             ]);
-            $this->sendResponse("success", "Registration successful", ['email'=>$data['email'], 'username'=>$data['username'], 'role'=>$data['role']]);
+            $this->sendResponse("success", "Registration successful", ['user_id'=>$newUser['user_id'], 'email'=>$data['email'], 'username'=>$data['username'], 'role'=>$data['role']]);
         } catch (Exception $e) {
             $this->sendResponse("error", "Internal Server Error", [], 500);
         }

@@ -75,7 +75,7 @@ $router->addRoute("POST", "/api/auth/logout", [$authController, "logout"]);
 //USERS
 $router->addRoute("GET", "/api/users", [$userController, "index"], [
     [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\RoleMiddleware::class, [['Admin']]],
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
 ]);
 
 $router->addRoute('GET', '/api/users/{id}', [$userController, 'show'], [
@@ -85,13 +85,12 @@ $router->addRoute('GET', '/api/users/{id}', [$userController, 'show'], [
 
 $router->addRoute("PUT", "/api/users/{id}", [$userController, "update"], [
     [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\AccessMiddleware::class, [\App\Policy\UserPolicy::class]]
-    
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\UserPolicy::class, 'action' => 'update', 'modelClass' => \App\Models\User::class]]]
 ]);
 
 $router->addRoute("DELETE", "/api/users/{id}", [$userController, "destroy"], [
     [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\AccessMiddleware::class, [\App\Policy\UserPolicy::class]]
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\UserPolicy::class, 'action' => 'update', 'modelClass' => \App\Models\User::class]]]
 
 ]);
 
@@ -113,19 +112,18 @@ $router->addRoute("POST", "/api/schools", [$schoolController, 'create'], [
 $router->addRoute("PUT", '/api/schools/{id}', [$schoolController, 'update'], [
     [\App\Middleware\AuthMiddleware::class],
     [\App\Middleware\RoleMiddleware::class, [['Admin']]],
-    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\SchoolPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\School::class]]]
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\SchoolPolicy::class, 'action' => 'update', 'modelClass' => \App\Models\School::class]]]
 ]);
 
 $router->addRoute("DELETE", '/api/schools/{id}', [$schoolController, 'destroy'], [
     [\App\Middleware\AuthMiddleware::class],
     [\App\Middleware\RoleMiddleware::class, [['Admin']]],
-    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\SchoolPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\School::class]]]
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\SchoolPolicy::class, 'action' => 'update', 'modelClass' => \App\Models\School::class]]]
 ]);
 
 // CLASSES
 $router->addRoute("GET", '/api/classes', [$classesController, 'index'], [
     [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\RoleMiddleware::class, [['Admin']]],
 ]);
 
 
@@ -136,25 +134,24 @@ $router->addRoute("GET", '/api/classes/{id}', [$classesController, 'show'], [
 
 $router->addRoute("POST", '/api/classes', [$classesController, 'create'], [
     [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\RoleMiddleware::class, [['Admin']]]
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]]
 ]);
 
 $router->addRoute("PUT", '/api/classes/{id}', [$classesController, 'update'], [
     [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\RoleMiddleware::class, [['Admin']]],
-    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\ClassesPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Classes::class]]]
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\ClassesPolicy::class, 'action' => 'update', 'modelClass' => \App\Models\Classes::class]]]
 ]);
 
 $router->addRoute("DELETE", '/api/classes/{id}', [$classesController, 'destroy'], [
     [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\RoleMiddleware::class, [['Admin']]],
-    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\ClassesPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Classes::class]]]
+    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\ClassesPolicy::class, 'action' => 'update', 'modelClass' => \App\Models\Classes::class]]]
 ]);
 
 // SUBJECTS
 $router->addRoute("GET", '/api/subjects', [$subjectController, 'index'], [
     [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
 ]);
 
 $router->addRoute("GET", '/api/subjects/{id}', [$subjectController, 'show'], [
@@ -176,14 +173,13 @@ $router->addRoute("PUT", '/api/subjects/{id}', [$subjectController, 'update'], [
 $router->addRoute("DELETE", '/api/subjects/{id}', [$subjectController, 'destroy'], [
     [\App\Middleware\AuthMiddleware::class],
     [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
-    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\SubjectPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Subject::class]]]
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\SubjectPolicy::class, 'action' => 'update', 'modelClass' => \App\Models\Subject::class]]]
 ]);
 
 
 // EXAMS
 $router->addRoute("GET", '/api/exams', [$examController, 'index'], [
     [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
 ]);
 
 $router->addRoute("GET", '/api/exams/{id}', [$examController, 'show'], [
@@ -193,26 +189,25 @@ $router->addRoute("GET", '/api/exams/{id}', [$examController, 'show'], [
 
 $router->addRoute("POST", '/api/exams', [$examController, 'create'], [
     [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+    [\App\Middleware\RoleMiddleware::class, [['Admin']]],
 ]);
 
 $router->addRoute("PUT", '/api/exams/{id}', [$examController, 'update'], [
     [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
+    [\App\Middleware\RoleMiddleware::class, [['Admin']]],
     [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\ExamPolicy::class, 'action' => 'update', 'modelClass' => \App\Models\Exam::class]]]
 ]);
 
 $router->addRoute("DELETE", '/api/exams/{id}', [$examController, 'destroy'], [
     [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
-    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\ExamPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Exam::class]]]
+    [\App\Middleware\RoleMiddleware::class, [['Admin']]],
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\ExamPolicy::class, 'action' => 'update', 'modelClass' => \App\Models\Exam::class]]]
 ]);
 
 
 // SUBJECTS_EXAMS
 $router->addRoute("GET", '/api/subject-exams', [$subjectsExamsController, 'index'], [
     [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
 ]);
 
 $router->addRoute("GET", '/api/subject-exams/{id}', [$subjectsExamsController, 'show'], [
@@ -234,14 +229,13 @@ $router->addRoute("PUT", '/api/subject-exams/{id}', [$subjectsExamsController, '
 $router->addRoute("DELETE", '/api/subject-exams/{id}', [$subjectsExamsController, 'destroy'], [
     [\App\Middleware\AuthMiddleware::class],
     [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
-    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\SubjectsExamsPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\SubjectsExams::class]]]
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\SubjectsExamsPolicy::class, 'action' => 'update', 'modelClass' => \App\Models\SubjectsExams::class]]]
 ]);
 
 
 // MARkS
 $router->addRoute("GET", '/api/marks', [$marksController, 'index'], [
     [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]]
 ]);
 
 $router->addRoute("GET", '/api/marks/{id}', [$marksController, 'show'], [
@@ -263,14 +257,13 @@ $router->addRoute("PUT", '/api/marks/{id}', [$marksController, 'update'], [
 $router->addRoute("DELETE", '/api/marks/{id}', [$marksController, 'destroy'], [
     [\App\Middleware\AuthMiddleware::class],
     [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
-    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\MarksPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Marks::class]]]
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\MarksPolicy::class, 'action' => 'update', 'modelClass' => \App\Models\Marks::class]]]
 ]);
 
 
 // ATTENDANCE
 $router->addRoute("GET", '/api/attendance', [$attendanceController, 'index'], [
     [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]]
 ]);
 
 $router->addRoute("GET", '/api/attendance/{id}', [$attendanceController, 'show'], [
@@ -292,7 +285,7 @@ $router->addRoute("PUT", '/api/attendance/{id}', [$attendanceController, 'update
 $router->addRoute("DELETE", '/api/attendance/{id}', [$attendanceController, 'destroy'], [
     [\App\Middleware\AuthMiddleware::class],
     [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
-    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\AttendancePolicy::class, 'action' => 'view', 'modelClass' => \App\Models\Attendance::class]]]
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\AttendancePolicy::class, 'action' => 'update', 'modelClass' => \App\Models\Attendance::class]]]
 ]);
 
 
@@ -300,7 +293,6 @@ $router->addRoute("DELETE", '/api/attendance/{id}', [$attendanceController, 'des
 // STUDENT_CLASSES
 $router->addRoute("GET", '/api/student-classes', [$studentClassesController, 'index'], [
     [\App\Middleware\AuthMiddleware::class],
-    [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]]
 ]);
 
 $router->addRoute("GET", '/api/student-classes/{id}', [$studentClassesController, 'show'], [
@@ -322,7 +314,7 @@ $router->addRoute("PUT", '/api/student-classes/{id}', [$studentClassesController
 $router->addRoute("DELETE", '/api/student-classes/{id}', [$studentClassesController, 'destroy'], [
     [\App\Middleware\AuthMiddleware::class],
     [\App\Middleware\RoleMiddleware::class, [['Admin', 'Teacher']]],
-    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\StuentsClassesPolicy::class, 'action' => 'view', 'modelClass' => \App\Models\StudentsClasses::class]]]
+    [\App\Middleware\AccessMiddleware::class, [['policy' => \App\Policy\StuentsClassesPolicy::class, 'action' => 'update', 'modelClass' => \App\Models\StudentsClasses::class]]]
 ]);
 
 $router->route();
