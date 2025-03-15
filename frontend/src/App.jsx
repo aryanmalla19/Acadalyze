@@ -14,6 +14,7 @@ import MainLayout from "./Layout/MainLayout";
 import useVerifyAuth from "./CustoomHook/useVerifyAuth";
 import PageLoader from "./Components/Common/PageLoader";
 import TeacherList from "./Components/TeacherPage/TeacherList";
+import StudentList from "./Components/StudentPage/StudentList";
 
 const App = () => {
   const { authUser, isCheckingAuth } = useVerifyAuth();
@@ -35,6 +36,7 @@ const App = () => {
           <Route element={<MainLayout />}>
             <Route path="/home" element={<Home />} />
             <Route path="/list/teachers" element={<TeacherList />} />
+            <Route path="/list/students" element={<StudentList />} />
           </Route>
         ) : (
           <Route path="*" element={<Navigate to="/auth" />} />
