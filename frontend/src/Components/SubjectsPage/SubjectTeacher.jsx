@@ -3,19 +3,19 @@ import Pagination from "../TeacherPage/Pagination";
 import TableList from "../TeacherPage/TableList";
 import TeacherTableSearch from "../TeacherPage/TeacherTableSearch";
 
-const StudentList = () => {
+const SubjectTeacher = () => {
   const columns = [
     {
-      header: "Student ID",
-      accessor: "studentid",
+      header: "Subject Name",
+      accessor: "subname",
       className: "hidden md:table-cell",
     },
-    { header: "Name", accessor: "name", className: "hidden md:table-cell" },
     {
-      header: "Class",
-      accessor: "class",
+      header: "Teacher Name",
+      accessor: "name",
       className: "hidden md:table-cell",
     },
+
     { header: "Phone", accessor: "phone", className: "hidden md:table-cell" },
     {
       header: "Address",
@@ -31,16 +31,14 @@ const StudentList = () => {
 
   const allData = [
     {
-      studentid: "1234567890",
+      subname: "Math, History",
       name: "Neetu Rai",
-      class: "5",
       phone: "1234567890",
       address: "Dhapasi",
     },
     {
-      studentid: "safds",
+      subname: "Healthe",
       name: "Sujata Chaudhary",
-      class: "5",
       phone: "9876543210",
       address: "Kathmandu",
     },
@@ -57,7 +55,9 @@ const StudentList = () => {
     <div className="bg-white p-4 rounded-md flex-1 m-4">
       {/* HEADER */}
       <div className="flex items-center justify-between mt-4">
-        <h1 className="hidden md:block text-lg font-semibold">All Students</h1>
+        <h1 className="hidden md:block text-lg font-semibold">
+          All Subject Teacher
+        </h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto md:text-left">
           {/* Pass query and setQuery to Search Component */}
           <TeacherTableSearch query={query} setQuery={setQuery} />
@@ -77,4 +77,4 @@ const StudentList = () => {
   );
 };
 
-export default StudentList;
+export default SubjectTeacher;

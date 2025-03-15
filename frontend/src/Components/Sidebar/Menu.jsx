@@ -116,7 +116,7 @@ const menuItems = [
 ];
 
 const Menu = () => {
-  const userRole = localStorage.getItem("role") || "teacher"; // Default role
+  const userRole = localStorage.getItem("role") || "admin"; // Default role
 
   return (
     <div className="text-sm">

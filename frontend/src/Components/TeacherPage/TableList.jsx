@@ -1,5 +1,5 @@
 import React from "react";
-import { Trash, Edit } from "lucide-react"; // Import icons
+import { Trash, Edit } from "lucide-react";
 
 const TableList = ({ columns, data, onDelete, onUpdate }) => {
   return (

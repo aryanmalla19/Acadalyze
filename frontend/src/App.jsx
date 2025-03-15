@@ -2,12 +2,6 @@ import React from "react";
 
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import Page1 from "./AdminPage/Dashboard/UserCard";
-import Page2 from "./AdminPage/Dashboard/CountCard";
-import Page3 from "./AdminPage/Dashboard/Attendence";
-import Page4 from "./AdminPage/Dashboard/EventCalender";
-import Sidebar from "./Components/Sidebar/Sidebar";
-
 import Home from "./AdminPage/Dashboard/Home";
 import Auth from "./AdminPage/Auth";
 import MainLayout from "./Layout/MainLayout";
@@ -16,6 +10,7 @@ import PageLoader from "./Components/Common/PageLoader";
 import TeacherList from "./Components/TeacherPage/TeacherList";
 import StudentList from "./Components/StudentPage/StudentList";
 import ParentList from "./Components/ParentsPage/ParentsList";
+import SubjectTeacher from "./Components/SubjectsPage/SubjectTeacher";
 
 const App = () => {
   const { authUser, isCheckingAuth } = useVerifyAuth();
@@ -39,6 +34,7 @@ const App = () => {
             <Route path="/list/teachers" element={<TeacherList />} />
             <Route path="/list/students" element={<StudentList />} />
             <Route path="/list/parents" element={<ParentList />} />
+            <Route path="/list/subjects" element={<SubjectTeacher />} />
           </Route>
         ) : (
           <Route path="*" element={<Navigate to="/auth" />} />
