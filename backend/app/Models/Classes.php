@@ -14,10 +14,26 @@ class Classes extends Model
 
     public function getAllBySchoolId($id)
     {
-        $stmt = $this->db->prepare("SELECT c.class_id, c.class_teacher_id, c.class_name, u.first_name, u.last_name, c.school_id FROM classes c LEFT JOIN users u ON c.class_teacher_id = u.user_id WHERE c.school_id = :school_id");
+        $stmt = $this->db->prepare("
+            SELECT 
+                c.class_id, 
+                c.class_teacher_id, 
+                c.class_name, 
+                u.first_name, 
+                u.last_name, 
+                c.school_id, 
+                COUNT(s.class_id) AS total_student
+            FROM classes c
+            LEFT JOIN users u ON c.class_teacher_id = u.user_id
+            LEFT JOIN student_classes s ON s.class_id = c.class_id
+            WHERE c.school_id = :school_id
+            GROUP BY c.class_id, c.class_teacher_id, c.class_name, u.first_name, u.last_name, c.school_id
+        ");
+                
         $stmt->execute([':school_id' => $id]);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC)??null;  
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?? null;  
     }
+    
 
     public function create($classTeacherId, $schoolId, $className)
     {
